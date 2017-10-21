@@ -2,6 +2,7 @@
   "apps" : [{
     "name"        : "Wlmscpfs Api",
     "script"      : "app.js",
+    "exec_mode"  : "cluster",
     "instances" : "max"
   }]
 }
