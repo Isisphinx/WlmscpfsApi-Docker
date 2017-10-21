@@ -16,5 +16,7 @@ RUN npm install \
 # Bundle app source
 COPY . .
 
+RUN ["chmod", "+x", "dump2dcm/dump2dcm"]
+
 EXPOSE 8080
 CMD [ "pm2-docker", "process.prod.json"]
