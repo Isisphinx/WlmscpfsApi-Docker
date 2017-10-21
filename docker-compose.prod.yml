@@ -1,19 +1,28 @@
 version: "3"
 services:
   web:
-    build: .
-    command: pm2-docker process.prod.json
-    restart: always
+    image: isisphinx/wlmscpfsapi
+    ports:
+      - "8080:8080"
     volumes:
       - worklistDirVolume:/usr/src/app/worklistDir
-  db:
+    links:
+      - "db:redis"
     restart: always
+  db:
+    image: redis:4-alpine
+    ports:
+      - "6379:6379"
     volumes:
       - redisData:/data
-  wl:
     restart: always
+  wl:
+    image: isisphinx/wlmscpfs
+    ports:
+      - "104:104"
     volumes:
       - worklistDirVolume:/usr/src/app/worklistDir
+    restart: always
 volumes:
   worklistDirVolume:
   redisData:
