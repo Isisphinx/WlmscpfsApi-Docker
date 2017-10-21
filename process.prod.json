@@ -1,0 +1,7 @@
+{
+  "apps" : [{
+    "name"        : "Wlmscpfs Api",
+    "script"      : "app.js",
+    "instances" : "max"
+  }]
+}

@@ -1,0 +1,19 @@
+version: "3"
+services:
+  web:
+    build: .
+    command: pm2-docker process.prod.json
+    restart: always
+    volumes:
+      - worklistDirVolume:/usr/src/app/worklistDir
+  db:
+    restart: always
+    volumes:
+      - redisData:/data
+  wl:
+    restart: always
+    volumes:
+      - worklistDirVolume:/usr/src/app/worklistDir
+volumes:
+  worklistDirVolume:
+  redisData:

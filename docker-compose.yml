@@ -1,0 +1,22 @@
+version: "3"
+services:
+  web:
+    build: .
+    command: pm2-dev process.json
+    ports:
+      - "8080:8080"
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+    links:
+      - "db:redis"
+  db:
+    image: redis:4-alpine
+    ports:
+      - "6379:6379"
+  wl:
+    image: isisphinx/wlmscpfs
+    ports:
+      - "104:104"
+    volumes:
+      - ./worklistDir:/usr/src/app/worklistDir
