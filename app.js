@@ -91,6 +91,7 @@ worker.start();
 
 app.get('/', (req, res) => {
   res.send('IsisDicomWorklist is running...');
+  console.log('HTTP GET /')
 });
 
 app.put('/:WorklistName/:StudyInstanceUID', (req, res) => {
