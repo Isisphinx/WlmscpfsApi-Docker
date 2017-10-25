@@ -9,6 +9,8 @@ const RSMQWorker = require("rsmq-worker");
 const { spawn } = require('child_process');
 const path = require('path');
 
+const logLevel=3
+
 app.use(bodyParser.json());
 
 const redisClient = redis.createClient(6379, 'redis')
@@ -24,6 +26,7 @@ rsmq.createQueue({ qname: "addStudies" }, (err, resp) => {
 });
 
 const worker = new RSMQWorker("addStudies", { redis: redisClient, interval: [.2, 1, 3] });
+
 worker.on("message", (msg, next, id) => {
   const msgJson = JSON.parse(msg);
 
@@ -42,6 +45,8 @@ worker.on("message", (msg, next, id) => {
 (fffe,e00d) -
 (fffe,e0dd) -
 (0040,1001) SH ${msgJson.RequestedProcedureID}`
+
+console.log(msg)
 
   // Format study in redis
   redisClient.hset([msgJson.WorklistName + ':' + msgJson.StudyInstanceUID,
@@ -90,12 +95,13 @@ worker.on('timeout', function (msg) {
 worker.start();
 
 app.get('/', (req, res) => {
-  res.send('IsisDicomWorklist is running...');
+  res.send('IsisDicomWorklist is running...!');
   console.log('HTTP GET /')
 });
 
 app.put('/:WorklistName/:StudyInstanceUID', (req, res) => {
   // Create or Replace a study and add it to queue
+  console.log(req.body)
   redisClient.sismember('worklist', req.params.WorklistName.toLowerCase(), (err, resp) => {
     if (err) throw err;
     if (resp === 1) {
