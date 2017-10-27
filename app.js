@@ -32,6 +32,8 @@ worker.on("message", (msg, next, id) => {
 
   const dumpFile = `(0010,0010) PN ${msgJson.PatientName}
 (0010,0020) LO ${msgJson.PatientID}
+(0010,0030) DA ${msgJson.PatientBirthDate}
+(0010,0040) CS ${msgJson.PatientSex}
 (0020,000d) UI ${msgJson.StudyInstanceUID}
 (0032,1060) LO ${msgJson.RequestedProcedureDescription}
 (0040,0100) SQ
@@ -51,6 +53,8 @@ console.log(msg)
   // Format study in redis
   redisClient.hset([msgJson.WorklistName + ':' + msgJson.StudyInstanceUID,
     'PatientName', msgJson.PatientName,
+    'PatientBirthDate',msgJson.PatientBirthDate,
+    'PatientSex',msgJson.PatientSex,
     'PatientID', msgJson.PatientID,
     'RequestedProcedureDescription', msgJson.RequestedProcedureDescription,
     'Modality', msgJson.Modality,
