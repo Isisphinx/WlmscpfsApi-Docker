@@ -1,6 +1,6 @@
 {
   "name": "wlmscpfs-api-docker",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "An API for Dcmtk Wlmscpfs running on Docker",
   "author": "Thibaut Constant <thibaut.constant@isisphinx.com>",
   "main": "server.js",
