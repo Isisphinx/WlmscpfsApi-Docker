@@ -2,27 +2,31 @@
 
 const app = require('express')();
 const fs = require('fs');
-const redis = require('redis');
 const bodyParser = require('body-parser');
-const RedisSMQ = require('rsmq');
-const RSMQWorker = require("rsmq-worker");
+const RSMQWorker = require('rsmq-worker');
 const { spawn } = require('child_process');
 const path = require('path');
 
-const logLevel=3
+const redisConnection = require('./config/redisConnection');
+const rsmqConnection = require('./config/rsmqConnection');
 
 app.use(bodyParser.json());
 
-const redisClient = redis.createClient(6379, 'redis')
-redisClient.on('error', (err)=> {
-  console.log('Error ' + err);
+const redisClient = redisConnection.redisClient;
+redisClient.on('error', (err) => {
+  redisConnection.logToConsole(err, 'Redis Connection Error')
 });
 
-const rsmq = new RedisSMQ({ client: redisClient, ns: "rsmq" });
-rsmq.createQueue({ qname: "addStudies" }, (err, resp) => {
-  if (resp === 1) {
-    console.log("Created queue addStudies")
-  }
+const rsmq = rsmqConnection.rsmq;
+
+const queueName = 'addStudies';
+rsmq.createQueue({ qname: queueName }, (err, resp) => {
+    if (err) {
+      redisConnection.logToConsole(err, 'Error Creating Rsmq queue', queueName);
+    }
+    if (resp === 1) {
+      redisConnection.logToConsole(queueName,'Rsmq queue created');
+    }
 });
 
 const worker = new RSMQWorker("addStudies", { redis: redisClient, interval: [.2, 1, 3] });
