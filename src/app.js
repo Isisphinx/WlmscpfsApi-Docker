@@ -10,6 +10,7 @@ const path = require('path');
 const redisConnection = require('./config/redisConnection');
 const rsmqConnection = require('./config/rsmqConnection');
 const tools = require('./helpers/tools');
+const config = require('./config/config');
 
 app.use(bodyParser.json());
 
@@ -20,17 +21,17 @@ redisClient.on('error', (err) => {
 
 const rsmq = rsmqConnection.rsmq;
 
-const queueName = 'addStudies';
-rsmq.createQueue({ qname: queueName }, (err, resp) => {
+const addStudiesQueue = config.addStudiesQueue
+rsmq.createQueue({ qname: addStudiesQueue }, (err, resp) => {
     if (err) {
-      tools.logToConsole(err, 'Error Creating Rsmq queue', queueName);
+      tools.logToConsole(err, 'Error Creating Rsmq queue', addStudiesQueue);
     }
     if (resp === 1) {
-      tools.logToConsole(queueName,'Rsmq queue created');
+      tools.logToConsole(addStudiesQueue,'Rsmq queue created');
     }
 });
 
-const worker = new RSMQWorker("addStudies", { redis: redisClient, interval: [.2, 1, 3] });
+const worker = new RSMQWorker(addStudiesQueue, { redis: redisClient, interval: [.2, 1, 3] });
 
 worker.on("message", (msg, next, id) => {
   const msgJson = JSON.parse(msg);
