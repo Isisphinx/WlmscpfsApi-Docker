@@ -9,12 +9,13 @@ const path = require('path');
 
 const redisConnection = require('./config/redisConnection');
 const rsmqConnection = require('./config/rsmqConnection');
+const tools = require('./helpers/tools');
 
 app.use(bodyParser.json());
 
 const redisClient = redisConnection.redisClient;
 redisClient.on('error', (err) => {
-  redisConnection.logToConsole(err, 'Redis Connection Error')
+  tools.logToConsole(err, 'Redis Connection Error')
 });
 
 const rsmq = rsmqConnection.rsmq;
@@ -22,10 +23,10 @@ const rsmq = rsmqConnection.rsmq;
 const queueName = 'addStudies';
 rsmq.createQueue({ qname: queueName }, (err, resp) => {
     if (err) {
-      redisConnection.logToConsole(err, 'Error Creating Rsmq queue', queueName);
+      tools.logToConsole(err, 'Error Creating Rsmq queue', queueName);
     }
     if (resp === 1) {
-      redisConnection.logToConsole(queueName,'Rsmq queue created');
+      tools.logToConsole(queueName,'Rsmq queue created');
     }
 });
 
