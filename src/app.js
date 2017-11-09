@@ -23,15 +23,25 @@ const rsmq = rsmqConnection.rsmq;
 
 const addStudiesQueue = config.addStudiesQueue
 rsmq.createQueue({ qname: addStudiesQueue }, (err, resp) => {
-    if (err) {
-      tools.logToConsole(err, 'Error Creating Rsmq queue', addStudiesQueue);
-    }
-    if (resp === 1) {
-      tools.logToConsole(addStudiesQueue,'Rsmq queue created');
-    }
+  if (err) {
+    tools.logToConsole(err, 'Error Creating Rsmq queue', addStudiesQueue);
+  }
+  if (resp === 1) {
+    tools.logToConsole(addStudiesQueue, 'Rsmq queue created');
+  }
 });
 
 const worker = new RSMQWorker(addStudiesQueue, { redis: redisClient, interval: [.2, 1, 3] });
+
+worker.on('error', function (err, msg) {
+  tools.logToConsole(err,'Worker error on message id', msg.id)
+});
+worker.on('exceeded', function (msg) {
+  tools.logToConsole(addStudiesQueue,'Queue exceeded', msg.id)
+});
+worker.on('timeout', function (msg) {
+  console.log("TIMEOUT", msg.id, msg.rc);
+});
 
 worker.on("message", (msg, next, id) => {
   const msgJson = JSON.parse(msg);
@@ -54,13 +64,13 @@ worker.on("message", (msg, next, id) => {
 (fffe,e0dd) -
 (0040,1001) SH ${msgJson.RequestedProcedureID}`
 
-console.log(msg)
+  tools.logToConsole(msg, 'Worker message received', addStudiesQueue)
 
   // Format study in redis
   redisClient.hset([msgJson.WorklistName + ':' + msgJson.StudyInstanceUID,
     'PatientName', msgJson.PatientName,
-    'PatientBirthDate',msgJson.PatientBirthDate,
-    'PatientSex',msgJson.PatientSex,
+    'PatientBirthDate', msgJson.PatientBirthDate,
+    'PatientSex', msgJson.PatientSex,
     'PatientID', msgJson.PatientID,
     'RequestedProcedureDescription', msgJson.RequestedProcedureDescription,
     'Modality', msgJson.Modality,
@@ -72,7 +82,8 @@ console.log(msg)
     'RequestedProcedureID', msgJson.RequestedProcedureID,
     'status', 'processing'], (err, res) => {
       if (err) throw err;
-      console.log('Added to database study ' + msgJson.StudyInstanceUID + ' with ' + res + ' new keyes');
+      tools.logToConsole(res, 'Worker message received', amsgJson.StudyInstanceUID)
+      
       fs.writeFile('processing/' + msgJson.StudyInstanceUID, dumpFile, (err) => {
         if (err) throw err;
         const dump2dcm = spawn('dump2dcm/dump2dcm', ['processing/' + msgJson.StudyInstanceUID, 'worklistDir/' + msgJson.WorklistName + '/' + msgJson.StudyInstanceUID + '.wl'], { 'env': { 'DCMDICTPATH': 'dump2dcm/dicom.dic' } });
@@ -89,17 +100,6 @@ console.log(msg)
         });
       });
     });
-});
-
-// optional error listeners
-worker.on('error', function (err, msg) {
-  console.log("ERROR", err, msg.id);
-});
-worker.on('exceeded', function (msg) {
-  console.log("EXCEEDED", msg.id);
-});
-worker.on('timeout', function (msg) {
-  console.log("TIMEOUT", msg.id, msg.rc);
 });
 
 worker.start();
@@ -180,10 +180,10 @@ app.purge('/:WorklistName', (req, res) => {
     if (err) throw err;
     if (resp === 1) {
       const directory = 'worklistDir/' + req.params.WorklistName.toLowerCase();
-      redisClient.keys(req.params.WorklistName.toLowerCase()+':*',(err, keys)=>{
+      redisClient.keys(req.params.WorklistName.toLowerCase() + ':*', (err, keys) => {
         if (err) throw err;
-          keys.forEach(function (key) {
-            redisClient.del(key);
+        keys.forEach(function (key) {
+          redisClient.del(key);
         });
       });
 
@@ -197,7 +197,7 @@ app.purge('/:WorklistName', (req, res) => {
             });
           }
         }
-        console.log('Worklist ' + req.params.WorklistName.toLowerCase() +' purged')
+        console.log('Worklist ' + req.params.WorklistName.toLowerCase() + ' purged')
       });
       res.send('OK');
     } else {
