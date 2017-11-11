@@ -16,24 +16,11 @@ app.use(bodyParser.json());
 
 // Initialize DB
 const redisClient = redisConnection.redisClient;
-redisClient.on('error', (err) => {
-  tools.logToConsole(err, 'Redis Connection Error')
-});
-
 const rsmq = rsmqConnection.rsmq;
-
 const addStudiesQueue = config.addStudiesQueue
 
-rsmq.createQueue({ qname: addStudiesQueue }, (err, resp) => {
-  if (err) tools.logToConsole(err, 'Error Creating Rsmq queue', addStudiesQueue);
-  if (resp === 1) tools.logToConsole(addStudiesQueue, 'Rsmq queue created');
-});
-// Initialize DB end
-
-
-
 // RSMQ Worker
-const worker = new RSMQWorker(addStudiesQueue, { redis: redisClient, interval: [.2, 1, 3], autostart:true });
+const worker = new RSMQWorker(addStudiesQueue, { redis: redisClient, interval: [.2, 1, 3], autostart: true });
 
 worker.on('error', function (err, msg) {
   tools.logToConsole(err, 'Worker error on message id', msg.id)
@@ -46,6 +33,8 @@ worker.on('timeout', function (msg) {
 });
 
 worker.on("message", (msg, next, id) => {
+  tools.logToConsole(msg, 'Message received by worker', addStudiesQueue)
+
   const msgJson = JSON.parse(msg);
 
   const dumpFile = `(0010,0010) PN ${msgJson.PatientName}
@@ -66,8 +55,6 @@ worker.on("message", (msg, next, id) => {
 (fffe,e0dd) -
 (0040,1001) SH ${msgJson.RequestedProcedureID}`
 
-  tools.logToConsole(msg, 'Message received by worker', addStudiesQueue)
-
   // Format study in redis
   redisClient.hset([msgJson.WorklistName + ':' + msgJson.StudyInstanceUID,
     'PatientName', msgJson.PatientName,
@@ -84,8 +71,6 @@ worker.on("message", (msg, next, id) => {
     'RequestedProcedureID', msgJson.RequestedProcedureID,
     'status', 'processing'], (err, res) => {
       if (err) throw err;
-
-      tools.logToConsole(res, 'Worker message received', amsgJson.StudyInstanceUID)
 
       fs.writeFile('processing/' + msgJson.StudyInstanceUID, dumpFile, (err) => {
         if (err) throw err;
@@ -123,8 +108,8 @@ app.put('/:WorklistName/:StudyInstanceUID', (req, res) => {
       req.body.StudyInstanceUID = req.params.StudyInstanceUID
 
       rsmq.sendMessage({ qname: addStudiesQueue, message: JSON.stringify(req.body) }, (err, resp) => {
-        if (resp) {
-        }
+        if (err) tools.logToConsole(err, 'Error sending message', resp+' '+addStudiesQueue);
+        if (resp) tools.logToConsole(resp, 'Message sent');
       });
       res.send('OK');
     } else {
