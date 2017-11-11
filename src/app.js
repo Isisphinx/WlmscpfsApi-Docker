@@ -33,7 +33,7 @@ rsmq.createQueue({ qname: addStudiesQueue }, (err, resp) => {
 
 
 // RSMQ Worker
-const worker = new RSMQWorker(addStudiesQueue, { redis: redisClient, interval: [.2, 1, 3],autostart:true });
+const worker = new RSMQWorker(addStudiesQueue, { redis: redisClient, interval: [.2, 1, 3], autostart:true });
 
 worker.on('error', function (err, msg) {
   tools.logToConsole(err, 'Worker error on message id', msg.id)
@@ -66,7 +66,7 @@ worker.on("message", (msg, next, id) => {
 (fffe,e0dd) -
 (0040,1001) SH ${msgJson.RequestedProcedureID}`
 
-  tools.logToConsole(msg, 'Worker message received', addStudiesQueue)
+  tools.logToConsole(msg, 'Message received by worker', addStudiesQueue)
 
   // Format study in redis
   redisClient.hset([msgJson.WorklistName + ':' + msgJson.StudyInstanceUID,

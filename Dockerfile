@@ -1,4 +1,4 @@
-FROM keymetrics/pm2:6
+FROM keymetrics/pm2:8
 
 # Create app directory
 WORKDIR /usr/src/app
