@@ -14,7 +14,7 @@ const rsmqConnection = require('config/rsmqConnection');
 const tools = require('helpers/tools');
 const constants = require('config/constants');
 
-const studyWorker = require('modules/studyWorker/studyWorker')
+const studyWorker = require('modules/studyWorker')
 
 app.use(bodyParser.json());
 
