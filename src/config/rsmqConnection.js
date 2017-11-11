@@ -1,8 +1,8 @@
 const RedisSMQ = require('rsmq');
 
-const redisConnection = require('./redisConnection');
-const constants = require('./constants');
-const tools = require('../helpers/tools');
+const redisConnection = require('config/redisConnection');
+const constants = require('config/constants');
+const tools = require('helpers/tools');
 
 const redisClient = redisConnection.redisClient;
 const rsmq = new RedisSMQ({ client: redisClient, ns: "rsmq" });

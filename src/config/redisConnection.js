@@ -1,6 +1,6 @@
 const redis = require('redis');
 
-const tools = require('../helpers/tools');
+const tools = require('helpers/tools');
 
 const redisClient = redis.createClient(6379, 'redis');
 

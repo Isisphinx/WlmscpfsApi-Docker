@@ -1,8 +1,8 @@
 const RSMQWorker = require('rsmq-worker');
 
-const redisConnection = require('../../config/redisConnection');
-const tools = require('../../helpers/tools');
-const constants = require('../../config/constants');
+const redisConnection = require('config/redisConnection');
+const tools = require('helpers/tools');
+const constants = require('config/constants');
 
 const redisClient = redisConnection.redisClient;
 const addStudiesQueue = constants.addStudiesQueue
