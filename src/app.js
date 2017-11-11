@@ -14,6 +14,7 @@ const config = require('./config/config');
 
 app.use(bodyParser.json());
 
+// Initialize DB
 const redisClient = redisConnection.redisClient;
 redisClient.on('error', (err) => {
   tools.logToConsole(err, 'Redis Connection Error')
@@ -22,25 +23,26 @@ redisClient.on('error', (err) => {
 const rsmq = rsmqConnection.rsmq;
 
 const addStudiesQueue = config.addStudiesQueue
-rsmq.createQueue({ qname: addStudiesQueue }, (err, resp) => {
-  if (err) {
-    tools.logToConsole(err, 'Error Creating Rsmq queue', addStudiesQueue);
-  }
-  if (resp === 1) {
-    tools.logToConsole(addStudiesQueue, 'Rsmq queue created');
-  }
-});
 
-const worker = new RSMQWorker(addStudiesQueue, { redis: redisClient, interval: [.2, 1, 3] });
+rsmq.createQueue({ qname: addStudiesQueue }, (err, resp) => {
+  if (err) tools.logToConsole(err, 'Error Creating Rsmq queue', addStudiesQueue);
+  if (resp === 1) tools.logToConsole(addStudiesQueue, 'Rsmq queue created');
+});
+// Initialize DB end
+
+
+
+// RSMQ Worker
+const worker = new RSMQWorker(addStudiesQueue, { redis: redisClient, interval: [.2, 1, 3],autostart:true });
 
 worker.on('error', function (err, msg) {
-  tools.logToConsole(err,'Worker error on message id', msg.id)
+  tools.logToConsole(err, 'Worker error on message id', msg.id)
 });
 worker.on('exceeded', function (msg) {
-  tools.logToConsole(addStudiesQueue,'Queue exceeded', msg.id)
+  tools.logToConsole(addStudiesQueue, 'Queue exceeded', msg.id)
 });
 worker.on('timeout', function (msg) {
-  console.log("TIMEOUT", msg.id, msg.rc);
+  tools.logToConsole(addStudiesQueue, 'Message timeout', msg.id + ' ' + msg.rc)
 });
 
 worker.on("message", (msg, next, id) => {
@@ -82,8 +84,9 @@ worker.on("message", (msg, next, id) => {
     'RequestedProcedureID', msgJson.RequestedProcedureID,
     'status', 'processing'], (err, res) => {
       if (err) throw err;
+
       tools.logToConsole(res, 'Worker message received', amsgJson.StudyInstanceUID)
-      
+
       fs.writeFile('processing/' + msgJson.StudyInstanceUID, dumpFile, (err) => {
         if (err) throw err;
         const dump2dcm = spawn('dump2dcm/dump2dcm', ['processing/' + msgJson.StudyInstanceUID, 'worklistDir/' + msgJson.WorklistName + '/' + msgJson.StudyInstanceUID + '.wl'], { 'env': { 'DCMDICTPATH': 'dump2dcm/dicom.dic' } });
@@ -102,7 +105,8 @@ worker.on("message", (msg, next, id) => {
     });
 });
 
-worker.start();
+// RSMQ Worker end
+
 
 app.get('/', (req, res) => {
   res.send('IsisDicomWorklist is running...!');
@@ -118,7 +122,7 @@ app.put('/:WorklistName/:StudyInstanceUID', (req, res) => {
       req.body.WorklistName = req.params.WorklistName.toLowerCase();
       req.body.StudyInstanceUID = req.params.StudyInstanceUID
 
-      rsmq.sendMessage({ qname: "addStudies", message: JSON.stringify(req.body) }, (err, resp) => {
+      rsmq.sendMessage({ qname: addStudiesQueue, message: JSON.stringify(req.body) }, (err, resp) => {
         if (resp) {
         }
       });
