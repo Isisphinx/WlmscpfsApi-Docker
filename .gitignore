@@ -1,1 +1,5 @@
 node_modules
+worklistDir/*
+!worklistDir/.gitignore
+processing/*
+!processing/.gitignore
