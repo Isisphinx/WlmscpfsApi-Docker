@@ -5,8 +5,6 @@ require('app-module-path').addPath(__dirname);
 const app = require('express')();
 const fs = require('fs');
 const bodyParser = require('body-parser');
-const RSMQWorker = require('rsmq-worker');
-const { spawn } = require('child_process');
 const path = require('path');
 
 const redisConnection = require('config/redisConnection');
