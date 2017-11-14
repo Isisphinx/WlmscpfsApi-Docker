@@ -8,7 +8,7 @@ module.exports.logToConsole = (log, text, optional) => {
   return log
 }
 
-module.exports.writeFile = ([file, data]) => {
+module.exports.writeFile = (file, data) => {
   return new Promise((resolve, reject) => {
     fs.writeFile(file, data, (err) => {
       if (err) reject(err)

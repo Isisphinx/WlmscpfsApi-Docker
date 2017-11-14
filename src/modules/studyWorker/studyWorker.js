@@ -8,10 +8,6 @@ const constants = require('config/constants')
 const redisClient = redisConnection.redisClient
 const addStudiesQueue = constants.addStudiesQueue
 
-/*
-Refator : Put utility function in separate file. [2]
-*/
-
 // RSMQ Worker
 const studyWorker = new RSMQWorker(addStudiesQueue, { redis: redisClient, interval: [.05, 1, 3], autostart: true })
 
@@ -31,13 +27,18 @@ studyWorker.on("message", (msg, next, id) => {
   const dumpData = returnDump(jsonData)
   const dumpFile = returnDumpFilePath(constants.worklistDir, jsonData)
 
-  tools.writeFile([dumpFile, dumpData]).then(data => convertDumpToWorklistFile(data)).then(data => tools.deleteFile(dumpFile)).then(data => { next() }).catch(err => { tools.logToConsole(err, 'Error creating worklist file') })
+  tools.writeFile(dumpFile, dumpData)
+  .then(data => convertDumpToWorklistFile(data))
+  .then(data => tools.deleteFile(dumpFile))
+  .then(data => { next() })
+  .catch(err => { tools.logToConsole(err, 'Error creating worklist file') })
 })
 
 module.exports.studyWorker = studyWorker
 
 
-// [2] :
+// Put utility functions in separate file :
+// 
 const returnDump = (json) => {
   return `(0010,0010) PN ${json.PatientName}
 (0010,0020) LO ${json.PatientID}
