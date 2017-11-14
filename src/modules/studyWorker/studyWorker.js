@@ -24,19 +24,19 @@ studyWorker.on('timeout', function (msg) {
 studyWorker.on("message", (msg, next, id) => {
   tools.logToConsole(msg, 'Message received by worker', addStudiesQueue)
   const jsonData = tools.returnJson(msg)
-  const dumpData = returnDump(jsonData)
   const dumpFile = returnDumpFilePath(constants.worklistDir, jsonData)
 
-  tools.writeFile(dumpFile, dumpData)
-  .then(data => convertDumpToWorklistFile(data))
-  .then(data => tools.deleteFile(dumpFile))
-  .then(data => { next() })
-  .catch(err => { tools.logToConsole(err, 'Error creating worklist file') })
+  Promise.resolve(returnDump(jsonData))
+    .then(data => tools.writeFile(dumpFile, data))
+    .then(data => convertDumpToWorklistFile(data))
+    .then(() => tools.deleteFile(dumpFile))
+    .then(() => { next() })
+    .catch(err => { tools.logToConsole(err, 'Error creating worklist file') })
 })
 
 module.exports.studyWorker = studyWorker
 
-
+// TO DO
 // Put utility functions in separate file :
 // 
 const returnDump = (json) => {

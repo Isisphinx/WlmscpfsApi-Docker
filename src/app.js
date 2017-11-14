@@ -14,6 +14,9 @@ const constants = require('config/constants')
 
 const studyWorker = require('modules/studyWorker')
 
+//temporary require
+require('modules/study/study.js')
+
 app.use(bodyParser.json())
 
 /*
