@@ -1,8 +1,9 @@
 const fs = require('fs')
 
+// To improve : include a log level and multiple optional
 module.exports.logToConsole = (log, text, optional) => {
-    optionalVal = optional || '';
-    const logString = `${text} *${optionalVal}* --- ${log}`
+    optionalVal = optional ? ` *${optional}* ` : ' '
+    const logString = `${text}${optionalVal}--- ${log}`
     console.log(logString)
     return log
 }

@@ -15,7 +15,7 @@ Put utility function in separate file. [2]
 */
 
 // RSMQ Worker
-const studyWorker = new RSMQWorker(addStudiesQueue, { redis: redisClient, interval: [.2, 1, 3], autostart: true })
+const studyWorker = new RSMQWorker(addStudiesQueue, { redis: redisClient, interval: [.05, 1, 3], autostart: true })
 
 studyWorker.on('error', function (err, msg) {
   tools.logToConsole(err, 'Worker error on message id', msg.id)
@@ -33,32 +33,32 @@ studyWorker.on("message", (msg, next, id) => {
   const dumpData = returnDump(jsonData)
   const dumpFile = returnDumpFilePath(constants.worklistDir, jsonData)
 
-  tools.writeFile([dumpFile, dumpData]).then(data => convertDumpToWorklistFile(data)).then(data => tools.deleteFile(dumpFile)).then(data => { next() }).catch(err => { tools.logToConsole(err, 'Error creating worklist file')})
+  tools.writeFile([dumpFile, dumpData]).then(data => convertDumpToWorklistFile(data)).then(data => tools.deleteFile(dumpFile)).then(data => { next() }).catch(err => { tools.logToConsole(err, 'Error creating worklist file') })
 })
 
 module.exports.studyWorker = studyWorker
 
 
-  /* [1]
-    const msgJson = JSON.parse(msg)
-    // Format study in redis
-    redisClient.hset([msgJson.WorklistName + ':' + msgJson.StudyInstanceUID,
-      'PatientName', msgJson.PatientName,
-      'PatientBirthDate', msgJson.PatientBirthDate,
-      'PatientSex', msgJson.PatientSex,
-      'PatientID', msgJson.PatientID,
-      'RequestedProcedureDescription', msgJson.RequestedProcedureDescription,
-      'Modality', msgJson.Modality,
-      'ScheduledStationAETitle', msgJson.ScheduledStationAETitle,
-      'ScheduledProcedureStepStartDate', msgJson.ScheduledProcedureStepStartDate,
-      'ScheduledProcedureStepStartTime', msgJson.ScheduledProcedureStepStartTime,
-      'ScheduledProcedureStepDescription', msgJson.ScheduledProcedureStepDescription,
-      'ScheduledProcedureStepID', msgJson.ScheduledProcedureStepID,
-      'RequestedProcedureID', msgJson.RequestedProcedureID,
-      'status', 'processing'], (err, res) => {
-        if (err) throw err
-      })
-  */
+/* [1]
+  const msgJson = JSON.parse(msg)
+  // Format study in redis
+  redisClient.hset([msgJson.WorklistName + ':' + msgJson.StudyInstanceUID,
+    'PatientName', msgJson.PatientName,
+    'PatientBirthDate', msgJson.PatientBirthDate,
+    'PatientSex', msgJson.PatientSex,
+    'PatientID', msgJson.PatientID,
+    'RequestedProcedureDescription', msgJson.RequestedProcedureDescription,
+    'Modality', msgJson.Modality,
+    'ScheduledStationAETitle', msgJson.ScheduledStationAETitle,
+    'ScheduledProcedureStepStartDate', msgJson.ScheduledProcedureStepStartDate,
+    'ScheduledProcedureStepStartTime', msgJson.ScheduledProcedureStepStartTime,
+    'ScheduledProcedureStepDescription', msgJson.ScheduledProcedureStepDescription,
+    'ScheduledProcedureStepID', msgJson.ScheduledProcedureStepID,
+    'RequestedProcedureID', msgJson.RequestedProcedureID,
+    'status', 'processing'], (err, res) => {
+      if (err) throw err
+    })
+*/
 
 // [2]
 const returnDump = (json) => {
