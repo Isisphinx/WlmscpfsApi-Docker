@@ -9,9 +9,7 @@ const redisClient = redisConnection.redisClient
 const addStudiesQueue = constants.addStudiesQueue
 
 /*
-Refator : 
-Add study to redis directly from route then pass to worker study id. [1]
-Put utility function in separate file. [2]
+Refator : Put utility function in separate file. [2]
 */
 
 // RSMQ Worker
@@ -39,28 +37,7 @@ studyWorker.on("message", (msg, next, id) => {
 module.exports.studyWorker = studyWorker
 
 
-/* [1]
-  const msgJson = JSON.parse(msg)
-  // Format study in redis
-  redisClient.hset([msgJson.WorklistName + ':' + msgJson.StudyInstanceUID,
-    'PatientName', msgJson.PatientName,
-    'PatientBirthDate', msgJson.PatientBirthDate,
-    'PatientSex', msgJson.PatientSex,
-    'PatientID', msgJson.PatientID,
-    'RequestedProcedureDescription', msgJson.RequestedProcedureDescription,
-    'Modality', msgJson.Modality,
-    'ScheduledStationAETitle', msgJson.ScheduledStationAETitle,
-    'ScheduledProcedureStepStartDate', msgJson.ScheduledProcedureStepStartDate,
-    'ScheduledProcedureStepStartTime', msgJson.ScheduledProcedureStepStartTime,
-    'ScheduledProcedureStepDescription', msgJson.ScheduledProcedureStepDescription,
-    'ScheduledProcedureStepID', msgJson.ScheduledProcedureStepID,
-    'RequestedProcedureID', msgJson.RequestedProcedureID,
-    'status', 'processing'], (err, res) => {
-      if (err) throw err
-    })
-*/
-
-// [2]
+// [2] :
 const returnDump = (json) => {
   return `(0010,0010) PN ${json.PatientName}
 (0010,0020) LO ${json.PatientID}

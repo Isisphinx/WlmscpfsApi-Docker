@@ -18,11 +18,6 @@ app.use(bodyParser.json())
 
 /*
 Make the db theSource of thruth
-
-Put study : put study in db then worker to convert to file
-
-delete study : delte file first then in db
-
 asynchronous accepted : 202 Accepted
 */
 
