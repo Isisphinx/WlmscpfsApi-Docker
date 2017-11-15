@@ -2,7 +2,7 @@ const RSMQWorker = require('rsmq-worker')
 const { spawn } = require('child_process')
 
 const redisConnection = require('config/redisConnection')
-const { logToConsole, writeFile, returnJson, deleteFile, toPromise, joinPath} = require('helpers/tools')
+const { logToConsole, writeFile, returnJson, deleteFile, toPromise, joinPath } = require('helpers/tools')
 const constants = require('config/constants')
 
 const redisClient = redisConnection.redisClient
@@ -12,17 +12,17 @@ const addStudiesQueue = constants.addStudiesQueue
 const studyWorker = new RSMQWorker(addStudiesQueue, { redis: redisClient, interval: [.05, 1, 3], autostart: true })
 
 studyWorker.on('error', function (err, msg) {
-  logToConsole(err, 'Worker error on message id', msg.id)
+  logToConsole(err, 'Worker error on message id', 1, msg.id)
 })
 studyWorker.on('exceeded', function (msg) {
-  logToConsole(addStudiesQueue, 'Queue exceeded', msg.id)
+  logToConsole(addStudiesQueue, 'Queue exceeded', 1,  msg.id)
 })
 studyWorker.on('timeout', function (msg) {
-  logToConsole(addStudiesQueue, 'Message timeout', msg.id + ' ' + msg.rc)
+  logToConsole(addStudiesQueue, 'Message timeout', 1, msg.id, msg.rc)
 })
 
 studyWorker.on("message", (msg, next, id) => {
-  logToConsole(msg, 'Message received by worker', addStudiesQueue)
+  logToConsole(msg, 'Message received by worker', 1, addStudiesQueue)
   const jsonData = returnJson(msg)
   const dumpFilePath = joinPath(constants.worklistDir, jsonData.WorklistName, jsonData.StudyInstanceUID)
 

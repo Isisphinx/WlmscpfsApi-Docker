@@ -1,15 +1,15 @@
 const fs = require('fs')
 const path = require('path')
+const {logLevel} = require('config/constants')
 
-// To improve : include a log level and multiple optional
-module.exports.logToConsole = (log, text, optional = '') => {
-  const time = new Date().toLocaleString() 
-  console.log(time,':', text, optional, '----', log)
+module.exports.logToConsole = (log, text, level = 1, ...args) => {
+  const time = new Date().toLocaleString()
+  if (level <= logLevel) console.log(time, ':', text, ...args, '----', log)
   return log
 }
 
-module.exports.promiseToConsole = (log, text, optional) => {
-  return Promise.resolve(module.exports.logToConsole(log, text, optional))
+module.exports.promiseToConsole = (...args) => {
+  return Promise.resolve(module.exports.logToConsole(...args))
 }
 
 module.exports.writeFile = (file, data) => {

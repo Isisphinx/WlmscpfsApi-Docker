@@ -35,7 +35,7 @@ toPromise(testobject)
   .then(data => promiseToConsole(data, 'jsonToString'))
 
   .then(data => stringToRedis(keytest, data, redisClient))
-  .then(data => promiseToConsole(data, 'stringtoredis', '**'))
+  .then(data => promiseToConsole(data, 'stringtoredis'))
 
   .then(([key]) => getRedisString(key, redisClient))
   .then(data => promiseToConsole(data, 'getredis'))
