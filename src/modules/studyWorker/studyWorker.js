@@ -28,7 +28,7 @@ studyWorker.on("message", (msg, next, id) => {
 
   Promise.resolve(returnDump(jsonData))
     .then(data => tools.writeFile(dumpFile, data))
-    .then(data => convertDumpToWorklistFile(data))
+    .then(([data]) => convertDumpToWorklistFile(data))
     .then(() => tools.deleteFile(dumpFile))
     .then(() => { next() })
     .catch(err => { tools.logToConsole(err, 'Error creating worklist file') })
