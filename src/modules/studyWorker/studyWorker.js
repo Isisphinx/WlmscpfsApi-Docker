@@ -1,8 +1,9 @@
 const RSMQWorker = require('rsmq-worker')
 const { spawn } = require('child_process')
+const path = require('path')
 
 const redisConnection = require('config/redisConnection')
-const tools = require('helpers/tools')
+const {logToConsole,writeFile,returnJson,deleteFile,toProm} = require('helpers/tools')
 const constants = require('config/constants')
 
 const redisClient = redisConnection.redisClient
@@ -12,26 +13,26 @@ const addStudiesQueue = constants.addStudiesQueue
 const studyWorker = new RSMQWorker(addStudiesQueue, { redis: redisClient, interval: [.05, 1, 3], autostart: true })
 
 studyWorker.on('error', function (err, msg) {
-  tools.logToConsole(err, 'Worker error on message id', msg.id)
+  logToConsole(err, 'Worker error on message id', msg.id)
 })
 studyWorker.on('exceeded', function (msg) {
-  tools.logToConsole(addStudiesQueue, 'Queue exceeded', msg.id)
+  logToConsole(addStudiesQueue, 'Queue exceeded', msg.id)
 })
 studyWorker.on('timeout', function (msg) {
-  tools.logToConsole(addStudiesQueue, 'Message timeout', msg.id + ' ' + msg.rc)
+  logToConsole(addStudiesQueue, 'Message timeout', msg.id + ' ' + msg.rc)
 })
 
 studyWorker.on("message", (msg, next, id) => {
-  tools.logToConsole(msg, 'Message received by worker', addStudiesQueue)
-  const jsonData = tools.returnJson(msg)
-  const dumpFile = returnDumpFilePath(constants.worklistDir, jsonData)
+  logToConsole(msg, 'Message received by worker', addStudiesQueue)
+  const jsonData = returnJson(msg)
+  const dumpFile = path.join(constants.worklistDir, jsonData.WorklistName, jsonData.StudyInstanceUID)
 
-  Promise.resolve(returnDump(jsonData))
-    .then(data => tools.writeFile(dumpFile, data))
+  toProm(returnDump(jsonData))
+    .then(data => writeFile(dumpFile, data))
     .then(([data]) => convertDumpToWorklistFile(data))
-    .then(() => tools.deleteFile(dumpFile))
+    .then(() => deleteFile(dumpFile))
     .then(() => { next() })
-    .catch(err => { tools.logToConsole(err, 'Error creating worklist file') })
+    .catch(err => { logToConsole(err, 'Error creating worklist file') })
 })
 
 module.exports.studyWorker = studyWorker
@@ -57,10 +58,6 @@ const returnDump = (json) => {
 (fffe,e00d) -
 (fffe,e0dd) -
 (0040,1001) SH ${json.RequestedProcedureID}`
-}
-
-const returnDumpFilePath = (worklistDir, json) => {
-  return `${worklistDir}/${json.WorklistName}/${json.StudyInstanceUID}`
 }
 
 const convertDumpToWorklistFile = (dumpFile) => {

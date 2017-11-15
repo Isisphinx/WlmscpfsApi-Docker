@@ -1,46 +1,31 @@
 const redisConnection = require('config/redisConnection')
-const { promiseLog, toProm, returnJson } = require('helpers/tools')
+const { toProm, returnJson, jsonToString, logToConsole, promiseToConsole } = require('helpers/tools')
+
 const redisClient = redisConnection.redisClient
 
 /*
-json from put -> validate json -> convert to array -> add in redis -> set study to processing -> add to worker
+json from put -> validate json -> convert to string -> add in redis -> set study to processing -> add to worker
 */
-
-const simpleObjectToArray = (myObject) => { //Take an object end return an array 
-  let myArray = []
-  Object.keys(myObject).map((key, index) => {
-    if (typeof myObject[key] === ('object'||'array')) throw 'Nested object not allowed in simpleObjectToArray()'
-    myArray.push(key)
-    myArray.push(myObject[key])
-  })
-  return myArray
-}
-
 const redisNamespaceKey = (namespace, key) => { //Return a key with a namespace for redis
   const namespacedKey = namespace + ':' + key
   return namespacedKey
 }
 
-// hset does not replace the key
-const arrayToRedisHash = (key, dataArray, redis) => { //Create or replace redis hset with dataArray at key 
+const stringToRedis = (key, dataString, redis) => {
   return new Promise((resolve, reject) => {
-    let arrayWithKey = dataArray
-    arrayWithKey.unshift(key)
-    redis.hset(arrayWithKey, (err, res) => {
+    redis.set(key, dataString, (err, res) => {
       if (err) reject(err)
-      resolve([key, dataArray])
+      resolve([key, dataString])
     })
   })
 }
 
-const getRedisHash = (key, redis) => {
+const getRedisString = (key, redis) => {
   return new Promise((resolve, reject) => {
-    redis.hgetall(key, (err, res) => {
+    redis.get(key, (err, res) => {
       if (err) reject(err)
-      if (!res) reject(`getRedisHash responded ${res} -- Key ${key} doesn't exist`)
       resolve(res)
     })
-
   })
 }
 
@@ -49,13 +34,16 @@ const testobject = { 'name': 'joe', 'nestedObj': { 'dob': '23011999' }, 'nestedA
 
 toProm(testobject)
 
-  .then(data => toProm(simpleObjectToArray(data)))
-  .then(data => promiseLog(data, 'objecToArray'))
+  .then(data => toProm(jsonToString(data)))
+  .then(data => promiseToConsole(data, 'jsonToString'))
 
-  .then(data => arrayToRedisHash(keytest, data, redisClient))
-  .then(([key]) => getRedisHash(key, redisClient))
-  .then(value => { console.log('final value', value.nestedObj) })
-  .catch(err => { console.log('catch',err) })
+  .then(data => stringToRedis(keytest, data, redisClient))
+  .then(data => promiseToConsole(data, 'stringtoredis', '**'))
+
+  .then(([key]) => getRedisString(key, redisClient))
+  .then(data => promiseToConsole(data, 'getredis'))
+  .then(value => { logToConsole(value, 'final value') })
+  .catch(err => { logToConsole(err, 'catch') })
 
 
 /*

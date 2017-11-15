@@ -1,11 +1,14 @@
 const fs = require('fs')
 
-// To improve : include a log level and multiple optional and time
-module.exports.logToConsole = (log, text, optional) => {
-  const optionalVal = optional ? ` *${optional}* ` : ' '
-  const logString = `${text}${optionalVal}--- ${log}`
-  console.log(logString)
+// To improve : include a log level and multiple optional
+module.exports.logToConsole = (log, text, optional = '') => {
+  const time = new Date().toLocaleString() 
+  console.log(time,':', text, optional, '----', log)
   return log
+}
+
+module.exports.promiseToConsole = (log, text, optional) => {
+  return Promise.resolve(module.exports.logToConsole(log, text, optional))
 }
 
 module.exports.writeFile = (file, data) => {
@@ -26,15 +29,9 @@ module.exports.deleteFile = (file) => {
   })
 }
 
-module.exports.promiseLog = (log,text) => {
-  const logString = `${text} --- ${log}`
-  
-  console.log(logString)
-  return Promise.resolve(log)
-}
-
-module.exports.toProm=(syncFunction)=>{
+module.exports.toProm = (syncFunction) => {
   return Promise.resolve(syncFunction)
 }
 
 module.exports.returnJson = (string) => JSON.parse(string)
+module.exports.jsonToString = (string) => JSON.stringify(string)
