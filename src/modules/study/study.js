@@ -6,6 +6,10 @@ const redisClient = redisConnection.redisClient
 
 /*
 json from put -> validate json -> convert to string -> add in redis -> set study to processing -> add to worker
+
+TO DO
+put study multiple procedure step : multiple file
+delete study : delte file first then in db
 */
 
 const stringToRedis = (key, dataString, redis) => {
@@ -41,11 +45,3 @@ toPromise(testobject)
   .then(data => promiseToConsole(data, 'getredis'))
   .then(value => { logToConsole(value, 'final value') })
   .catch(err => { logToConsole(err, 'catch') })
-
-
-/*
-TO DO
-Put study : put study in db then worker to convert to file
-put study multiple procedure step : multiple file
-delete study : delte file first then in db
-*/
