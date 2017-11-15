@@ -1,15 +1,12 @@
 const redisConnection = require('config/redisConnection')
-const { toProm, returnJson, jsonToString, logToConsole, promiseToConsole } = require('helpers/tools')
+const { toPromise, returnJson, jsonToString, logToConsole, promiseToConsole, redisKeyWithNamespace } = require('helpers/tools')
+const path = require('path')
 
 const redisClient = redisConnection.redisClient
 
 /*
 json from put -> validate json -> convert to string -> add in redis -> set study to processing -> add to worker
 */
-const redisNamespaceKey = (namespace, key) => { //Return a key with a namespace for redis
-  const namespacedKey = namespace + ':' + key
-  return namespacedKey
-}
 
 const stringToRedis = (key, dataString, redis) => {
   return new Promise((resolve, reject) => {
@@ -29,12 +26,12 @@ const getRedisString = (key, redis) => {
   })
 }
 
-const keytest = redisNamespaceKey('myNS', '123')
+const keytest = redisKeyWithNamespace('myNS', '123')
 const testobject = { 'name': 'joe', 'nestedObj': { 'dob': '23011999' }, 'nestedArray': [{ 'A': '1' }, { 'B': '2' }] }
 
-toProm(testobject)
+toPromise(testobject)
 
-  .then(data => toProm(jsonToString(data)))
+  .then(data => toPromise(jsonToString(data)))
   .then(data => promiseToConsole(data, 'jsonToString'))
 
   .then(data => stringToRedis(keytest, data, redisClient))

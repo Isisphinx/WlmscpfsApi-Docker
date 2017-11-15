@@ -1,4 +1,5 @@
 const fs = require('fs')
+const path = require('path')
 
 // To improve : include a log level and multiple optional
 module.exports.logToConsole = (log, text, optional = '') => {
@@ -29,9 +30,12 @@ module.exports.deleteFile = (file) => {
   })
 }
 
-module.exports.toProm = (syncFunction) => {
-  return Promise.resolve(syncFunction)
-}
+module.exports.toPromise = (syncFunction) => Promise.resolve(syncFunction)
+
+module.exports.joinPath = (...args) => path.join(...args)
 
 module.exports.returnJson = (string) => JSON.parse(string)
+
 module.exports.jsonToString = (string) => JSON.stringify(string)
+
+module.exports.redisKeyWithNamespace = (...args) => args.join(':')
