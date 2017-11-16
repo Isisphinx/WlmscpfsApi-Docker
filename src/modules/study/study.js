@@ -1,18 +1,14 @@
-const redisConnection = require('config/redisConnection')
-const { toPromise, returnJson, jsonToString, logToConsole, promiseToConsole, redisKeyWithNamespace } = require('helpers/tools')
-const path = require('path')
-
-const redisClient = redisConnection.redisClient
+const {redisClient} = require('config/redisConnection')
 
 /*
-json from put -> validate json -> convert to string -> add in redis -> set study to processing -> add to worker
+json from put -> validate json -> convert to string -> add in redis -> add to worker
 
 TO DO
 put study multiple procedure step : multiple file
 delete study : delte file first then in db
 */
 
-const stringToRedis = (key, dataString, redis) => {
+module.exports.stringToRedis = (key, dataString, redis) => {
   return new Promise((resolve, reject) => {
     redis.set(key, dataString, (err, res) => {
       if (err) reject(err)
@@ -21,7 +17,7 @@ const stringToRedis = (key, dataString, redis) => {
   })
 }
 
-const getRedisString = (key, redis) => {
+module.exports.getRedisString = (key, redis) => {
   return new Promise((resolve, reject) => {
     redis.get(key, (err, res) => {
       if (err) reject(err)
@@ -29,19 +25,3 @@ const getRedisString = (key, redis) => {
     })
   })
 }
-
-const keytest = redisKeyWithNamespace('myNS', '123')
-const testobject = { 'name': 'joe', 'nestedObj': { 'dob': '23011999' }, 'nestedArray': [{ 'A': '1' }, { 'B': '2' }] }
-
-toPromise(testobject)
-
-  .then(data => toPromise(jsonToString(data)))
-  .then(data => promiseToConsole(data, 'jsonToString'))
-
-  .then(data => stringToRedis(keytest, data, redisClient))
-  .then(data => promiseToConsole(data, 'stringtoredis'))
-
-  .then(([key]) => getRedisString(key, redisClient))
-  .then(data => promiseToConsole(data, 'getredis'))
-  .then(value => { logToConsole(value, 'final value') })
-  .catch(err => { logToConsole(err, 'catch', 0) })

@@ -9,6 +9,7 @@ const redisClient = redisConnection.redisClient
 const addStudiesQueue = constants.addStudiesQueue
 
 // RSMQ Worker
+// reate an error as it also create the queue if it doesn't exist
 const studyWorker = new RSMQWorker(addStudiesQueue, { redis: redisClient, interval: [.05, 1, 3], autostart: true })
 
 studyWorker.on('error', function (err, msg) {

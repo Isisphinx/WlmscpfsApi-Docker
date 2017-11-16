@@ -11,8 +11,9 @@ const redisConnection = require('config/redisConnection')
 const rsmqConnection = require('config/rsmqConnection')
 const tools = require('helpers/tools')
 const constants = require('config/constants')
-
 const studyWorker = require('modules/studyWorker')
+
+
 
 //temporary require
 require('modules/study/study.js')
@@ -20,10 +21,9 @@ require('modules/study/study.js')
 app.use(bodyParser.json())
 
 /*
-Make the db theSource of thruth
 asynchronous accepted : 202 Accepted
 */
-
+require('modules/study/studyRoutes.js')(app)
 // Initialize DB
 const redisClient = redisConnection.redisClient
 const rsmq = rsmqConnection.rsmq
@@ -34,29 +34,29 @@ app.get('/', (req, res) => {
   res.send('Dicom Worklist is running...')
 })
 
-app.put('/:WorklistName/:StudyInstanceUID', (req, res) => {
-  // Create or Replace a study and add it to queue
-  console.log(req.body)
-  redisClient.sismember('worklist', req.params.WorklistName.toLowerCase(), (err, resp) => {
-    if (err) throw err
-    if (resp === 1) {
-      req.body.WorklistName = req.params.WorklistName.toLowerCase()
-      req.body.StudyInstanceUID = req.params.StudyInstanceUID
+// app.put('/:WorklistName/:StudyInstanceUID', (req, res) => {
+//   // Create or Replace a study and add it to queue
+//   console.log(req.body)
+//   redisClient.sismember('worklist', req.params.WorklistName.toLowerCase(), (err, resp) => {
+//     if (err) throw err
+//     if (resp === 1) {
+//       req.body.WorklistName = req.params.WorklistName.toLowerCase()
+//       req.body.StudyInstanceUID = req.params.StudyInstanceUID
 
-      rsmq.sendMessage({ qname: addStudiesQueue, message: JSON.stringify(req.body) })
-        .then(result => {
-          tools.logToConsole(result, 'Message sent')
-        }).catch(err => {
-          tools.logToConsole(err, 'Error sending message', resp + ' ' + addStudiesQueue)
-        })
+//       rsmq.sendMessage({ qname: addStudiesQueue, message: JSON.stringify(req.body) })
+//         .then(result => {
+//           tools.logToConsole(result, 'Message sent')
+//         }).catch(err => {
+//           tools.logToConsole(err, 'Error sending message', resp + ' ' + addStudiesQueue)
+//         })
 
-      res.send('OK')
-    } else {
-      console.log('Worklist ' + req.params.WorklistName.toLowerCase() + ' not found')
-      res.sendStatus(404)
-    }
-  })
-})
+//       res.send('OK')
+//     } else {
+//       console.log('Worklist ' + req.params.WorklistName.toLowerCase() + ' not found')
+//       res.sendStatus(404)
+//     }
+//   })
+// })
 
 app.put('/:WorklistName/', (req, res) => {
   console.log('HTTP PUT ' + req.params.WorklistName.toLowerCase())
