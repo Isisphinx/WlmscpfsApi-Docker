@@ -12,7 +12,7 @@ const addStudiesQueue = constants.addStudiesQueue
 const studyWorker = new RSMQWorker(addStudiesQueue, { redis: redisClient, interval: [.05, 1, 3], autostart: true })
 
 studyWorker.on('error', function (err, msg) {
-  logToConsole(err, 'Worker error on message id', 1, msg.id)
+  logToConsole(err, 'Worker error on message id', 0, msg.id)
 })
 studyWorker.on('exceeded', function (msg) {
   logToConsole(addStudiesQueue, 'Queue exceeded', 1,  msg.id)
@@ -31,7 +31,7 @@ studyWorker.on("message", (msg, next, id) => {
     .then(([data]) => convertDumpToWorklistFile(data))
     .then(() => deleteFile(dumpFilePath))
     .then(() => { next() })
-    .catch(err => { logToConsole(err, 'Error creating worklist file') })
+    .catch(err => { logToConsole(err, 'Error creating worklist file',0) })
 })
 
 module.exports.studyWorker = studyWorker

@@ -4,7 +4,7 @@ const {logLevel} = require('config/constants')
 
 module.exports.logToConsole = (log, text, level = 1, ...args) => {
   const time = new Date().toLocaleString()
-  if (level <= logLevel) console.log(time, ':', text, ...args, '----', log)
+  if (level <= logLevel) console.log(time, ':', text, ...args, '---', log)
   return log
 }
 

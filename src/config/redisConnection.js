@@ -1,14 +1,15 @@
-const redis = require('redis');
+const redis = require('redis')
 
-const tools = require('helpers/tools');
+const { logToConsole } = require('helpers/tools')
+const { redisHost, redisPort } = require('config/constants')
 
-const redisClient = redis.createClient(6379, 'redis');
+const redisClient = redis.createClient(redisPort, redisHost)
 
-redisClient.on('connect', function () {
-    tools.logToConsole('Connected', 'Redis Client')
-});
+redisClient.on('connect', () => {
+  logToConsole('Connected', 'Redis Client on', 1, redisHost, redisPort)
+})
 redisClient.on('error', (err) => {
-    tools.logToConsole(err, 'Redis Connection Error')
-});
+  logToConsole(err, 'Redis Connection Error', 1, redisHost, redisPort)
+})
 
 module.exports.redisClient = redisClient

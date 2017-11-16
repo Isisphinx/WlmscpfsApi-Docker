@@ -43,10 +43,13 @@ app.put('/:WorklistName/:StudyInstanceUID', (req, res) => {
       req.body.WorklistName = req.params.WorklistName.toLowerCase()
       req.body.StudyInstanceUID = req.params.StudyInstanceUID
 
-      rsmq.sendMessage({ qname: addStudiesQueue, message: JSON.stringify(req.body) }, (err, resp) => {
-        if (err) tools.logToConsole(err, 'Error sending message', resp + ' ' + addStudiesQueue)
-        if (resp) tools.logToConsole(resp, 'Message sent')
-      })
+      rsmq.sendMessage({ qname: addStudiesQueue, message: JSON.stringify(req.body) })
+        .then(result => {
+          tools.logToConsole(result, 'Message sent')
+        }).catch(err => {
+          tools.logToConsole(err, 'Error sending message', resp + ' ' + addStudiesQueue)
+        })
+
       res.send('OK')
     } else {
       console.log('Worklist ' + req.params.WorklistName.toLowerCase() + ' not found')
