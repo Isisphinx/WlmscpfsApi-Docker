@@ -1,7 +1,8 @@
 const {redisClient} = require('config/redisConnection')
 
 /*
-json from put -> validate json -> convert to string -> add in redis -> add to worker
+check if worklist exist -> json from put -> validate json -> convert to string -> add in redis -> add to worker
+worklistname to lowercase
 
 TO DO
 put study multiple procedure step : multiple file

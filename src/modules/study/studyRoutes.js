@@ -17,10 +17,13 @@ module.exports = (app) => { // PUT study to create or update study
       .then(data => stringToRedis(studyRedisKey, data, redisClient))
       .then(([key]) => getRedisString(key, redisClient))
       .then(value => {
-        logToConsole(value, 'final value')
+        logToConsole(value, 'Added study')
         res.send('202')
       })
-      .catch(err => { logToConsole(err, 'catch', 0) })
+      .catch(err => {
+        logToConsole(err, 'Added study error', 0, WorklistName, StudyInstanceUID, studyData)
+        res.send('404')
+      })
   })
 
   app.delete('/:WorklistName/:StudyInstanceUID', (req, res) => { // DELETE study
