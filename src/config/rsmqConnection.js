@@ -1,14 +1,13 @@
 const RSMQPromise = require('rsmq-promise')
 
 const {redisClient} = require('config/redisConnection')
-const constants = require('config/constants')
+const {addStudiesQueue} = require('config/constants')
 const { logToConsole, toPromise } = require('helpers/tools')
 
 const rsmq = new RSMQPromise({ client: redisClient, ns: "rsmq" })
-const addStudiesQueue = constants.addStudiesQueue
 
 const valueNotInArray = (myArray, value) => {
-  if (myArray.includes(value)) throw ('Value ' + value + ' is already in array')
+  if (myArray.includes(value)) throw (value + ' is already in array')
   return [myArray, value]
 }
 

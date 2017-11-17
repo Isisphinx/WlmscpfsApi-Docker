@@ -13,17 +13,13 @@ const tools = require('helpers/tools')
 const constants = require('config/constants')
 const studyWorker = require('modules/studyWorker')
 
-
-
 //temporary require
 require('modules/study/study.js')
 
 app.use(bodyParser.json())
 
-/*
-asynchronous accepted : 202 Accepted
-*/
 require('modules/study/studyRoutes.js')(app)
+
 // Initialize DB
 const redisClient = redisConnection.redisClient
 const rsmq = rsmqConnection.rsmq

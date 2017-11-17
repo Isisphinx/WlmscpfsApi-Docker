@@ -38,4 +38,4 @@ module.exports.returnJson = (string) => JSON.parse(string)
 
 module.exports.jsonToString = (string) => JSON.stringify(string)
 
-module.exports.redisKeyWithNamespace = (...args) => args.join(':')
+module.exports.stringToLowerCase = (string) => string.toLowerCase()
