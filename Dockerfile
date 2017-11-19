@@ -19,4 +19,4 @@ COPY . .
 RUN ["chmod", "+x", "dump2dcm/dump2dcm"]
 
 EXPOSE 8080
-CMD [ "pm2-docker", "process.prod.json"]
+CMD [ "pm2-docker", "process.prod.json",]

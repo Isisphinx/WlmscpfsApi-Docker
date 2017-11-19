@@ -1,10 +1,9 @@
 const RSMQWorker = require('rsmq-worker')
-const { spawn } = require('child_process')
 
 const { redisClient } = require('config/redisConnection')
-const { logToConsole, writeFile, returnJson, deleteFile, toPromise, joinPath } = require('helpers/tools')
+const { logToConsole, writeFile, returnJson, deleteFile, joinPath } = require('helpers/tools')
 const { getRedisString, parseRedisKey } = require('helpers/redis')
-const { addStudiesQueue, worklistDir } = require('config/constants')
+const { addStudiesQueue, worklistDir, pino } = require('config/constants')
 const { returnDump, convertDumpToWorklistFile } = require('./dumpFile.js')
 
 /*
@@ -30,14 +29,15 @@ studyWorker.on("message", (msg, next, id) => {
   const dumpFilePath = joinPath(worklistDir, worklistName, StudyInstanUID)
 
   getRedisString(msg, redisClient)
-    .then(studyDataString => toPromise(returnJson(studyDataString)))
-    .then(studyData => toPromise(returnDump(studyData)))
+    .then(returnJson)
+    .then(returnDump)
     .then(data => writeFile(dumpFilePath, data))
     .then(([data]) => convertDumpToWorklistFile(data))
     .then(data => deleteFile(dumpFilePath))
     .then(dumpFile => {
       logToConsole(dumpFile, 'Created worklist file', 1)
       next()
+      return dumpFile
     })
     .catch(err => { logToConsole(err, 'Error creating worklist file', 1) })
 })

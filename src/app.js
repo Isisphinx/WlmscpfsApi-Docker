@@ -10,23 +10,24 @@ const path = require('path')
 const redisConnection = require('config/redisConnection')
 const rsmqConnection = require('config/rsmqConnection')
 const tools = require('helpers/tools')
-const constants = require('config/constants')
+const { addStudiesQueue, pino } = require('config/constants')
 const studyWorker = require('modules/studyWorker')
 
-//temporary require
-require('modules/study/study.js')
+/*
+TO DO
+- gracefully shutdown application on exit signal
+*/
 
 app.use(bodyParser.json())
 
-require('modules/study/studyRoutes.js')(app)
+require('modules/study')(app)
 
 // Initialize DB
 const redisClient = redisConnection.redisClient
 const rsmq = rsmqConnection.rsmq
-const addStudiesQueue = constants.addStudiesQueue
 
 app.get('/', (req, res) => {
-  tools.logToConsole(req, 'get', '/')
+  pino.info('Get / --- Dicom Worklist is running...')
   res.send('Dicom Worklist is running...')
 })
 

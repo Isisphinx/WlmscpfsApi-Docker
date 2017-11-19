@@ -1,3 +1,5 @@
+const { spawn } = require('child_process')
+
 module.exports.returnDump = (json) => { //Return the dump file data
   return `(0010,0010) PN ${json.PatientName}
 (0010,0020) LO ${json.PatientID}

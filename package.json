@@ -3,7 +3,7 @@
   "version": "0.2.0",
   "description": "An API for Dcmtk Wlmscpfs running on Docker",
   "author": "Thibaut Constant <thibaut.constant@isisphinx.com>",
-  "main": "server.js",
+  "main": "src/app.js",
   "scripts": {
     "start": "node server.js"
   },
@@ -13,6 +13,7 @@
     "redis": "^2.8.0",
     "rsmq-promise": "^1.0.0",
     "rsmq-worker": "^0.5.2",
-    "app-module-path":"2.2.0"
+    "app-module-path":"^2.2.0",
+    "pino":"^4.10.2" 
   }
 }
