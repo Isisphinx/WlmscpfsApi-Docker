@@ -1,8 +1,12 @@
 const RSMQPromise = require('rsmq-promise')
 
-const {redisClient} = require('config/redisConnection')
-const {addStudiesQueue} = require('config/constants')
-const { logToConsole, toPromise } = require('helpers/tools')
+const { redisClient } = require('config/redisConnection')
+const { addStudiesQueue, pino } = require('config/constants')
+
+/*
+TO DO
+- Handle different error type
+*/
 
 const rsmq = new RSMQPromise({ client: redisClient, ns: "rsmq" })
 
@@ -12,11 +16,11 @@ const valueNotInArray = (myArray, value) => {
 }
 
 rsmq.listQueues()
-  .then(queues => toPromise(valueNotInArray(queues, addStudiesQueue)))
+  .then(queues => valueNotInArray(queues, addStudiesQueue))
   .then(([myArray, value]) => rsmq.createQueue({ qname: value }))
-  .then(value => { logToConsole(addStudiesQueue, 'rsmq queue created') })
+  .then(value => { pino.info('Rsmq queue', addStudiesQueue, 'created') })
   .catch(err => {
-    logToConsole(err, 'Error Creating Rsmq queue', 1, addStudiesQueue)
+    pino.error('Error Creating Rsmq queue', addStudiesQueue, err)
   })
 
 module.exports.rsmq = rsmq

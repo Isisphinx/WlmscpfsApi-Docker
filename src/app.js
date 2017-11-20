@@ -9,7 +9,6 @@ const path = require('path')
 
 const redisConnection = require('config/redisConnection')
 const rsmqConnection = require('config/rsmqConnection')
-const tools = require('helpers/tools')
 const { addStudiesQueue, pino } = require('config/constants')
 const studyWorker = require('modules/studyWorker')
 
