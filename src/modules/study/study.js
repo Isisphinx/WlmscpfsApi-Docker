@@ -1,6 +1,7 @@
 const { redisClient } = require('config/redisConnection')
 const { jsonToString, stringToLowerCase, deleteFile, joinPath } = require('helpers/tools')
 const { redisKeyWithNamespace, stringToRedis, isMemberOfRedisSet, redisDeleteKey, redisKeyExist } = require('helpers/redis')
+const { pinoPromise } = require('helpers/promise')
 const { addStudiesQueue, pino, worklistDir } = require('config/constants')
 const { rsmq } = require('config/rsmqConnection')
 
