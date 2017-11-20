@@ -14,6 +14,8 @@ const studyWorker = require('modules/studyWorker')
 
 /*
 TO DO
+- Refactor Creat worklist
+- Refactor purge worklist
 - gracefully shutdown application on exit signal
 */
 
@@ -26,7 +28,7 @@ const redisClient = redisConnection.redisClient
 const rsmq = rsmqConnection.rsmq
 
 app.get('/', (req, res) => {
-  pino.info('Get / --- Dicom Worklist is running...')
+  pino.debug('Http:Get /')
   res.send('Dicom Worklist is running...')
 })
 

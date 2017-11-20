@@ -54,7 +54,7 @@ module.exports.deleteStudy = (req, res) => {
     .then(key => {
       pino.debug('Deleted study', key)
       res.send('200')
-      return data
+      return key
     })
     .catch(err => {
       pino.error('Error trying to delete study', studyRedisKey, err)

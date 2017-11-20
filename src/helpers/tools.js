@@ -13,7 +13,6 @@ module.exports.writeFile = (file, data) => {
 module.exports.deleteFile = (file) => {
   return new Promise((resolve, reject) => {
     fs.unlink(file, (err) => {
-      console.log('DELETE')
       if (err) reject(err)
       resolve(file)
     })
