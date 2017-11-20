@@ -14,7 +14,6 @@ const studyWorker = require('modules/studyWorker')
 
 /*
 TO DO
-- Refactor Creat worklist
 - Refactor purge worklist
 - gracefully shutdown application on exit signal
 */
@@ -22,6 +21,7 @@ TO DO
 app.use(bodyParser.json())
 
 require('modules/study')(app)
+require('modules/worklist')(app)
 
 // Initialize DB
 const redisClient = redisConnection.redisClient
@@ -30,30 +30,6 @@ const rsmq = rsmqConnection.rsmq
 app.get('/', (req, res) => {
   pino.debug('Http:Get /')
   res.send('Dicom Worklist is running...')
-})
-
-app.put('/:WorklistName/', (req, res) => {
-  console.log('HTTP PUT ' + req.params.WorklistName.toLowerCase())
-  // Create worklist
-  redisClient.sismember('worklist', req.params.WorklistName.toLowerCase(), (err, resp) => {
-    if (err) throw err
-    if (resp === 0) {
-      fs.mkdirSync('worklistDir/' + req.params.WorklistName.toLowerCase(), (err) => {
-        if (err) throw err
-      })
-      fs.writeFile('worklistDir/' + req.params.WorklistName.toLowerCase() + '/lockfile', '', (err) => {
-        if (err) throw err
-      })
-      redisClient.sadd(['worklist', req.params.WorklistName.toLowerCase()], (err, res) => {
-        if (err) throw err
-      })
-      console.log('Worklist ' + req.params.WorklistName.toLowerCase() + ' created')
-      res.send('OK')
-    } else {
-      console.log('Worklist ' + req.params.WorklistName.toLowerCase() + ' exist already')
-      res.sendStatus(409)
-    }
-  })
 })
 
 app.purge('/:WorklistName', (req, res) => {

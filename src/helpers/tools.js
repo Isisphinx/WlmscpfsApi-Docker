@@ -19,6 +19,15 @@ module.exports.deleteFile = (file) => {
   })
 }
 
+module.exports.makeDir = (path) => {
+  return new Promise((resolve, reject) => {
+    fs.mkdir(path, (err) => {
+      if (err) reject(err)
+      resolve(path)
+    })
+  })
+}
+
 module.exports.toPromise = (syncFunction) => Promise.resolve(syncFunction)
 
 module.exports.joinPath = (...args) => path.join(...args)

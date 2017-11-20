@@ -20,7 +20,7 @@ rsmq.listQueues()
   .then(([myArray, value]) => rsmq.createQueue({ qname: value }))
   .then(value => { pino.info('Rsmq queue', addStudiesQueue, 'created') })
   .catch(err => {
-    pino.error('Error Creating Rsmq queue', addStudiesQueue, err)
+    pino.error('Error Creating Rsmq queue', addStudiesQueue,':', err)
   })
 
 module.exports.rsmq = rsmq
