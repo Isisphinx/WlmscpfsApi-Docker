@@ -1,7 +1,7 @@
 const RSMQWorker = require('rsmq-worker')
 
 const { redisClient } = require('config/redisConnection')
-const { logToConsole, writeFile, returnJson, deleteFile, joinPath } = require('helpers/tools')
+const { writeFile, returnJson, deleteFile, joinPath } = require('helpers/tools')
 const { getRedisString, parseRedisKey } = require('helpers/redis')
 const { addStudiesQueue, worklistDir, pino } = require('config/constants')
 const { returnDump, convertDumpToWorklistFile } = require('./dumpFile.js')
@@ -14,32 +14,33 @@ TO DO
 const studyWorker = new RSMQWorker(addStudiesQueue, { redis: redisClient, interval: [.05, 1, 3], autostart: true }) // Throw an error as it also silently create the queue
 
 studyWorker.on('error', function (err, msg) {
-  logToConsole(err, 'Worker error on message id', 1, msg.id)
+  pino.error('Worker error on message id', msg.id, err)
 })
 studyWorker.on('exceeded', function (msg) {
-  logToConsole(addStudiesQueue, 'Queue exceeded', 1, msg.id)
+  pino.warn('Queue exceeded', addStudiesQueue, msg.id)
+
 })
 studyWorker.on('timeout', function (msg) {
-  logToConsole(addStudiesQueue, 'Message timeout', 1, msg.id, msg.rc)
+  pino.warn('Message timeout', addStudiesQueue, msg.id, msg.rc)
 })
 
 studyWorker.on("message", (msg, next, id) => {
-  logToConsole(msg, 'Message received by worker', 1, addStudiesQueue)
-  const [worklistName, StudyInstanUID] = parseRedisKey(msg)
-  const dumpFilePath = joinPath(worklistDir, worklistName, StudyInstanUID)
+  pino.debug('Message received by worker', addStudiesQueue, msg)
+  const [worklistName, StudyInstanceUID] = parseRedisKey(msg)
+  const dumpFilePath = joinPath(worklistDir, worklistName, StudyInstanceUID)
 
   getRedisString(msg, redisClient)
-    .then(returnJson)
-    .then(returnDump)
-    .then(data => writeFile(dumpFilePath, data))
-    .then(([data]) => convertDumpToWorklistFile(data))
+    .then(redisDataString => returnJson(redisDataString))
+    .then(redisDataObject => returnDump(redisDataObject))
+    .then(dumpData => writeFile(dumpFilePath, dumpData))
+    .then(([filePath]) => convertDumpToWorklistFile(filePath))
     .then(data => deleteFile(dumpFilePath))
     .then(dumpFile => {
-      logToConsole(dumpFile, 'Created worklist file', 1)
+      pino.debug('Created worklist file', dumpFile)
       next()
       return dumpFile
     })
-    .catch(err => { logToConsole(err, 'Error creating worklist file', 1) })
+    .catch(err => { pino.error('Error creating worklist file', dumpFile) })
 })
 
 module.exports.studyWorker = studyWorker

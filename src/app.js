@@ -55,26 +55,6 @@ app.put('/:WorklistName/', (req, res) => {
   })
 })
 
-app.delete('/:WorklistName/:StudyInstanceUID', (req, res) => {
-  console.log('HTTP DELETE ' + req.params.WorklistName.toLowerCase() + ':' + req.params.StudyInstanceUID)
-  redisClient.exists(req.params.WorklistName.toLowerCase() + ':' + req.params.StudyInstanceUID, (err, resp) => {
-    if (err) throw err
-    if (resp === 1) {
-      console.log('del')
-
-      fs.unlink('worklistDir/' + req.params.WorklistName.toLowerCase() + '/' + req.params.StudyInstanceUID + '.wl', (err) => {
-        if (err) throw err
-        redisClient.del(req.params.WorklistName.toLowerCase() + ':' + req.params.StudyInstanceUID, (err, resp) => {
-          if (err) throw err
-          res.send('OK')
-        })
-      })
-    } else {
-      res.sendStatus(404)
-    }
-  })
-})
-
 app.purge('/:WorklistName', (req, res) => {
   console.log('HTTP PURGE ' + req.params.WorklistName.toLowerCase())
   redisClient.sismember('worklist', req.params.WorklistName.toLowerCase(), (err, resp) => {
