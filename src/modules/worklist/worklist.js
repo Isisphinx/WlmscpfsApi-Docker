@@ -34,3 +34,9 @@ module.exports.createWorklist = (req, res) => {
       res.send('400')
     })
 }
+
+module.exports.purgeWorklist = (req, res) => {
+/*
+Check if worklist exists -> List all member of worklist -> Delete File -> Delete key in redis
+*/
+}

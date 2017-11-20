@@ -10,7 +10,7 @@
   "dependencies": {
     "body-parser": "^1.18.2",
     "express": "^4.13.3",
-    "redis": "^2.8.0",
+    "redis":"^2.8.0",
     "rsmq-promise": "^1.0.0",
     "rsmq-worker": "^0.5.2",
     "app-module-path":"^2.2.0",

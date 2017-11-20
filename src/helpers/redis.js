@@ -2,6 +2,11 @@ const isRequired = (name) => {
   throw new Error(name + 'is required')
 }
 
+/*
+TO DO : 
+Silent error if no db specified or if reference error
+*/
+
 module.exports.stringToRedis = (key, dataString, redis = isRequired('redis')) => { // Add the specified string to redis
   return new Promise((resolve, reject) => {
     redis.set(key, dataString, (err, res) => {

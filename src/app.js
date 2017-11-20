@@ -8,14 +8,15 @@ const bodyParser = require('body-parser')
 const path = require('path')
 
 const redisConnection = require('config/redisConnection')
-const rsmqConnection = require('config/rsmqConnection')
-const { addStudiesQueue, pino } = require('config/constants')
+const { pino } = require('config/constants')
 const studyWorker = require('modules/studyWorker')
 
 /*
 TO DO
+- Start listening when db connected stop if db disconnected
 - Refactor purge worklist
-- gracefully shutdown application on exit signal
+- Gracefully shutdown application on exit signal
+- Change promise to bluebird
 */
 
 app.use(bodyParser.json())
@@ -25,12 +26,12 @@ require('modules/worklist')(app)
 
 // Initialize DB
 const redisClient = redisConnection.redisClient
-const rsmq = rsmqConnection.rsmq
 
 app.get('/', (req, res) => {
   pino.debug('Http:Get /')
   res.send('Dicom Worklist is running...')
 })
+
 
 app.purge('/:WorklistName', (req, res) => {
   console.log('HTTP PURGE ' + req.params.WorklistName.toLowerCase())

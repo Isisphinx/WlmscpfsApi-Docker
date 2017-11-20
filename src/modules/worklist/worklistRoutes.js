@@ -1,4 +1,4 @@
-const { createWorklist } = require('./worklist')
+const { createWorklist,purgeWorklist } = require('./worklist')
 const { pino } = require('config/constants')
 
 module.exports = (app) => {
@@ -9,7 +9,7 @@ module.exports = (app) => {
   })
 
   app.purge('/:WorklistName', (req, res) => {
-
+    purgeWorklist
   })
 
 }
