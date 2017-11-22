@@ -14,6 +14,7 @@
     "rsmq-promise": "^1.0.0",
     "rsmq-worker": "^0.5.2",
     "app-module-path":"^2.2.0",
-    "pino":"^4.10.2" 
+    "pino":"^4.10.2",
+    "bluebird":"^3.5.1"
   }
 }
