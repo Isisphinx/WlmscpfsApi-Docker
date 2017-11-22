@@ -30,13 +30,13 @@ module.exports.createWorklist = (req, res) => {
       return pathLockFile
     })
     .catch(err => {
-      pino.error('createWorklist()', 'Error trying to create worklist', worklistNameLowerCase, err)
+      pino.error(err, 'createWorklist()', 'Error trying to create worklist', worklistNameLowerCase)
       res.send('400')
     })
 }
 
 module.exports.purgeWorklist = (req, res) => {
-/*
-Check if worklist exists -> List all member of worklist -> Delete File -> Delete key in redis
-*/
+  /*
+  Check if worklist exists -> List all member of worklist -> Delete File -> Delete key in redis
+  */
 }

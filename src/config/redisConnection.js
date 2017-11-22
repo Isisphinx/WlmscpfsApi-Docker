@@ -1,10 +1,10 @@
-const redis = require('redis')
+const redis = require('ioredis')
 
 const { redisHost, redisPort, pino } = require('config/constants')
 
-const redisClient = new Redis(redisPort, redisHost) 
+const redisClient = new redis(redisPort, redisHost) 
 
 redisClient.on('connect', () => { pino.info('Redis client connected to host', `${redisHost}:${redisPort}`) })
-redisClient.on('error', (err) => { pino.error('Redis Connection Error', `${redisHost}:${redisPort}`, err) })
+redisClient.on('error', (err) => { pino.error(err,'Redis Connection Error', `${redisHost}:${redisPort}`) })
 
 module.exports.redisClient = redisClient

@@ -17,9 +17,12 @@ const valueNotInArray = (myArray, value) => {
 }
 
 rsmq.listQueues()
-  .then(queues => valueNotInArray(queues, addStudiesQueue))
-  .then(([myArray, value]) => rsmq.createQueue({ qname: value }))
+  // .then(queues => valueNotInArray(queues, addStudiesQueue))
+  .then(([myArray, value]) =>  hello.createQueue({ qname: value }))
+
   .then(value => { pino.info('Rsmq queue', addStudiesQueue, 'created') })
   .catch(err => {
-    pino.error('Error Creating Rsmq queue', addStudiesQueue, ':', err)
+    // console.log(err)
+    pino.error(err,'Error Creating Rsmq queue', addStudiesQueue)
   }) 
+ 

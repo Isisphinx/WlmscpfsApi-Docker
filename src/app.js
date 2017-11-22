@@ -13,7 +13,7 @@ const studyWorker = require('modules/studyWorker')
 
 /*
 TO DO
-- Change to ioredis -> rsmq and worker change to own connection not reuse redis
+- ioredis using promised version
 - Start listening when db connected stop if db disconnected
 - Refactor purge worklist
 - Gracefully shutdown application on exit signal

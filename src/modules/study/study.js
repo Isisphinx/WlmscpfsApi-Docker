@@ -37,7 +37,7 @@ module.exports.createStudy = (req, res) => {
       return sendMessageValue
     })
     .catch(err => {
-      pino.error('Error trying to add study', studyRedisKey, studyData, err)
+      pino.error(err, 'Error trying to add study', studyRedisKey, studyData)
       res.send('400')
     })
 }
@@ -58,7 +58,7 @@ module.exports.deleteStudy = (req, res) => {
       return key
     })
     .catch(err => {
-      pino.error('Error trying to delete study', studyRedisKey, err)
+      pino.error(err, 'Error trying to delete study', studyRedisKey)
       res.send('400')
     })
 }
