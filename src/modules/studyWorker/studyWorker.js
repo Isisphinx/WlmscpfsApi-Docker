@@ -12,7 +12,7 @@ TO DO
 - multiple procedure step -> multiple file
 */
 
-const studyWorker = new RSMQWorker(addStudiesQueue, { host: redisHost, port: redisPort, interval: [.05, 1, 3], autostart: true }) // Throw an error as it also silently create the queue
+const studyWorker = new RSMQWorker(addStudiesQueue, { host: redisHost, port: redisPort, interval: [.05, 1, 3], autostart: true, redisPrefix: 'rsmq' }) // Throw an error as it also silently create the queue
 
 studyWorker.on('error', function (err, msg) {
   pino.error(err, 'Worker error on message id', msg.id)
@@ -26,7 +26,7 @@ studyWorker.on('timeout', function (msg) {
 })
 
 studyWorker.on("message", (msg, next, id) => {
-  pino.debug('Message received by worker', addStudiesQueue, msg)
+  pino.debug(msg,'Message received by worker', addStudiesQueue)
   const [worklistName, StudyInstanceUID] = parseRedisKey(msg)
   const dumpFilePath = joinPath(worklistDir, worklistName, StudyInstanceUID)
 
