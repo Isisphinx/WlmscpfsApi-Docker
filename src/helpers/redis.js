@@ -1,9 +1,4 @@
-var Promise = require('bluebird')
-
-/*
-TO DO : 
-Silent error if no db specified or if reference error
-*/
+const Promise = require('bluebird')
 
 module.exports.stringToRedis = (key, dataString, redis) => { // Add the specified string to redis
   return new Promise((resolve, reject) => {

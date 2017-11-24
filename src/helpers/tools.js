@@ -37,3 +37,7 @@ module.exports.returnJson = (string) => JSON.parse(string)
 module.exports.jsonToString = (string) => JSON.stringify(string)
 
 module.exports.stringToLowerCase = (string) => string.toLowerCase()
+
+module.exports.returnErrorString = (err) => {throw err}
+
+module.exports.valueIstInArray = (myArray, value) => myArray.includes(value)
