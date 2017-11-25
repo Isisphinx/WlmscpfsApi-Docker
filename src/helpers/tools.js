@@ -28,6 +28,14 @@ module.exports.makeDir = (path) => {
   })
 }
 
+module.exports.returnFilesPath = (files, path) => {
+  return files.reduce((accumulator, file) => {
+    const pathFile = module.exports.joinPath(path, file)
+    accumulator.push(pathFile)
+    return accumulator
+  }, [])
+}
+
 module.exports.toPromise = (syncFunction) => Promise.resolve(syncFunction)
 
 module.exports.joinPath = (...args) => path.join(...args)

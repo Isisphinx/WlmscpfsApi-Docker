@@ -1,6 +1,6 @@
-const fs = require('fs')
 const path = require('path')
 const Promise = require('bluebird')
+const fs = Promise.promisifyAll(require('fs'))
 
 const { pino } = require('config/constants')
 
@@ -22,20 +22,11 @@ module.exports.deleteFile = (file) => {
   })
 }
 
-module.exports.deleteFilesList = (files) => {
-  return new Promise((resolve, reject) => {
-    let errorArray = []
-    let successArray = []
-    return files.map((file) => {
-     return fs.unlink(file, (err) => {
-        if (err) errorArray.push(err)
-        successArray.push(file)
-      })
-    })
-    console.log('errorArray', errorArray)
-    if (errorArray) reject(errorArray)
-    // resolve(successArray)
-  })
+module.exports.deleteArrayOfFiles = (filesArray) => {
+  return Promise.map(filesArray, (file) => fs.unlinkAsync(file).then(data => file).catch(err => {
+    pino.error(err, 'Error deleting file')
+    return { 'err': err.cause.path }
+  }))
 }
 
 module.exports.makeDir = (path) => {
