@@ -4,23 +4,7 @@ const fs = Promise.promisifyAll(require('fs'))
 
 const { pino } = require('config/constants')
 
-module.exports.writeFile = (file, data) => {
-  return new Promise((resolve, reject) => {
-    fs.writeFile(file, data, (err) => {
-      if (err) reject(err)
-      resolve([file, data])
-    })
-  })
-}
-
-module.exports.deleteFile = (file) => {
-  return new Promise((resolve, reject) => {
-    fs.unlink(file, (err) => {
-      if (err) reject(err)
-      resolve(file)
-    })
-  })
-}
+module.exports.fs = fs
 
 module.exports.deleteArrayOfFiles = (filesArray) => {
   return Promise.map(filesArray, (file) => fs.unlinkAsync(file).then(data => file).catch(err => {
@@ -29,23 +13,7 @@ module.exports.deleteArrayOfFiles = (filesArray) => {
   }))
 }
 
-module.exports.makeDir = (path) => {
-  return new Promise((resolve, reject) => {
-    fs.mkdir(path, (err) => {
-      if (err) reject(err)
-      resolve(path)
-    })
-  })
-}
-
-module.exports.readDir = (path) => {
-  return new Promise((resolve, reject) => {
-    fs.readdir(path, (err, files) => {
-      if (err) reject(err)
-      resolve(files)
-    })
-  })
-}
+module.exports.toPromise = (syncFunction) => Promise.resolve(syncFunction)
 
 module.exports.pinoPromise = {}
 

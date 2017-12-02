@@ -1,13 +1,16 @@
+const path = require('path')
+
 const { redisClient } = require('config/redisConnection')
-const { jsonToString, stringToLowerCase, deleteFile, joinPath } = require('helpers/tools')
+const { stringToLowerCase } = require('helpers/tools')
 const { redisKeyWithNamespace, stringToRedis, isMemberOfRedisSet, redisDeleteKey, redisKeyExist } = require('helpers/redis')
-const { pinoPromise } = require('helpers/promise')
+const { pinoPromise, fs } = require('helpers/promise')
 const { addStudiesQueue, pino, worklistDir, worklistListSet } = require('config/constants')
 const { rsmq } = require('config/rsmqConnection')
 
 /*
 TO DO
 - Validate json
+- Extract function out of req res
 - Handle different error type
 - Separate create and delete study ?
 */
@@ -28,7 +31,7 @@ module.exports.createStudy = (req, res) => {
 
   isMemberOfRedisSet(worklistListSet, worklistNameLowerCase, redisClient)
     .then(([redisSet, value]) => studyData)
-    .then((data) => jsonToString(data))
+    .then((data) => JSON.stringify(data))
     .then(studyDataString => stringToRedis(studyRedisKey, studyDataString, redisClient))
     .then(([redisKey, dataString]) => rsmq.sendMessage({ qname: addStudiesQueue, message: redisKey }))
     .then(sendMessageValue => {
@@ -47,10 +50,10 @@ module.exports.deleteStudy = (req, res) => {
   Check if study exist -> Delete worklist file -> Delete study in db
   */
   const [worklistNameLowerCase, StudyInstanceUID, studyRedisKey] = parseReqWorklistParams(req)
-  const worklistFilePath = joinPath(worklistDir, worklistNameLowerCase, StudyInstanceUID + '.wl')
+  const worklistFilePath = path.join(worklistDir, worklistNameLowerCase, StudyInstanceUID + '.wl')
 
   redisKeyExist(studyRedisKey, redisClient)
-    .then((key) => deleteFile(worklistFilePath))
+    .then((key) => fs.unlinkAsync(worklistFilePath))
     .then((file) => redisDeleteKey(studyRedisKey, redisClient))
     .then(key => {
       pino.debug('Deleted study', key)

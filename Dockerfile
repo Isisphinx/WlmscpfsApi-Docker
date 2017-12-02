@@ -9,8 +9,9 @@ COPY package.json .
 RUN apk add --no-cache --virtual .gyp \
         python \
         make \
-        g++
-RUN npm install \
+        g++ \
+        yarn
+RUN yarn install \
     && apk del .gyp
 
 # Bundle app source

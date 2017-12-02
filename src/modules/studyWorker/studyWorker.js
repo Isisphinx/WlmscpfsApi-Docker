@@ -1,11 +1,11 @@
 const RSMQWorker = require('rsmq-worker')
+const path = require('path')
 
 const { redisClient } = require('config/redisConnection')
-const { writeFile, returnJson, deleteFile, joinPath } = require('helpers/tools')
 const { getRedisString, parseRedisKey } = require('helpers/redis')
 const { addStudiesQueue, worklistDir, pino, redisHost, redisPort } = require('config/constants')
 const { returnDump, convertDumpToWorklistFile } = require('./dumpFile.js')
-const { pinoPromise } = require('helpers/promise')
+const { pinoPromise, fs } = require('helpers/promise')
 
 /*
 TO DO
@@ -26,27 +26,27 @@ studyWorker.on('timeout', function (msg) {
 })
 
 studyWorker.on("message", (msg, next, id) => {
-  pino.debug(msg,'Message received by worker', addStudiesQueue)
+  pino.debug(msg, 'Message received by worker', addStudiesQueue)
   const [worklistName, StudyInstanceUID] = parseRedisKey(msg)
-  const dumpFilePath = joinPath(worklistDir, worklistName, StudyInstanceUID)
+  const dumpFilePath = path.join(worklistDir, worklistName, StudyInstanceUID)
 
   getRedisString(msg, redisClient)
     .then(data => pinoPromise.trace(data, 'studyWorker.on("message")', 'getRedisString'))
 
-    .then(redisDataString => returnJson(redisDataString))
-    .then(data => pinoPromise.trace(data, 'studyWorker.on("message")', 'returnJson'))
+    .then(redisDataString => JSON.parse(redisDataString))
+    .then(data => pinoPromise.trace(data, 'studyWorker.on("message")', 'JSON.parse(redisDataString)'))
 
     .then(redisDataObject => returnDump(redisDataObject))
     .then(data => pinoPromise.trace(data, 'studyWorker.on("message")', 'returnDump'))
 
-    .then(dumpData => writeFile(dumpFilePath, dumpData))
-    .then(data => pinoPromise.trace(data, 'studyWorker.on("message")', 'writeFile'))
+    .then(dumpData => fs.writeFileAsync(dumpFilePath, dumpData))
+    .then(data => pinoPromise.trace(data, 'studyWorker.on("message")', 'fs.writeFileAsync(dumpFilePath, dumpData)'))
 
     .then(([filePath]) => convertDumpToWorklistFile(filePath))
     .then(data => pinoPromise.trace(data, 'studyWorker.on("message")', 'convertDumpToWorklistFile'))
 
-    .then(data => deleteFile(dumpFilePath))
-    .then(data => pinoPromise.trace(data, 'studyWorker.on("message")', 'deleteFile'))
+    .then(data => fs.unlinkAsync(dumpFilePath))
+    .then(data => pinoPromise.trace(data, 'studyWorker.on("message")', 'fs.unlinkAsync(dumpFilePath)'))
 
     .then(dumpFile => {
       pino.debug('Created worklist file', dumpFile)

@@ -5,16 +5,21 @@
   "author": "Thibaut Constant <thibaut.constant@isisphinx.com>",
   "main": "src/app.js",
   "scripts": {
-    "start": "node server.js"
+    "start": "node server.js",
+    "test": "jest"
   },
   "dependencies": {
+    "app-module-path": "^2.2.0",
+    "bluebird": "^3.5.1",
     "body-parser": "^1.18.2",
     "express": "^4.13.3",
     "ioredis": "^3.2.1",
-    "rsmq-promise": "^1.0.0",
-    "rsmq-worker": "^0.5.2",
-    "app-module-path": "^2.2.0",
     "pino": "^4.10.2",
-    "bluebird": "^3.5.1"
+    "rsmq-promise": "^1.0.0",
+    "rsmq-worker": "^0.5.2"
+  },
+  "devDependencies": {
+    "jest": "^21.2.1",
+    "jsdoc": "^3.5.5"
   }
 }
