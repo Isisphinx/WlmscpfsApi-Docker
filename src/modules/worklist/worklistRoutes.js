@@ -1,5 +1,5 @@
 const { createWorklist, purgeWorklist } = require('./worklist')
-const { pino } = require('config/constants')
+const { pino } = rootRequire('config/constants')
 
 module.exports = (app) => {
 

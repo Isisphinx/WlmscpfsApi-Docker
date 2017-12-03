@@ -1,15 +1,17 @@
 'use strict'
+const path = require('path')
 
-require('app-module-path').addPath(__dirname)
+global.rootRequire = function (name) {
+  return require(path.join(__dirname, name))
+}
 
 const app = require('express')()
 const fs = require('fs')
 const bodyParser = require('body-parser')
-const path = require('path')
 
-const redisConnection = require('config/redisConnection')
-const { pino } = require('config/constants')
-const studyWorker = require('modules/studyWorker')
+const redisConnection = rootRequire('config/redisConnection')
+const { pino } = rootRequire('config/constants')
+const studyWorker = rootRequire('modules/studyWorker')
 
 /*
 TO DO
@@ -24,8 +26,8 @@ TO DO
 
 app.use(bodyParser.json())
 
-require('modules/study')(app)
-require('modules/worklist')(app)
+rootRequire('modules/study')(app)
+rootRequire('modules/worklist')(app)
 
 // Initialize DB
 const redisClient = redisConnection.redisClient

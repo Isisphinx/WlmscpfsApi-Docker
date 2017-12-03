@@ -1,8 +1,8 @@
 const RSMQPromise = require('rsmq-promise')
 
-const { redisClient } = require('config/redisConnection')
-const { addStudiesQueue, pino, redisHost, redisPort } = require('config/constants')
-const { returnErrorString,valueIstInArray } = require('helpers/tools')
+const { redisClient } = rootRequire('config/redisConnection')
+const { addStudiesQueue, pino, redisHost, redisPort } = rootRequire('config/constants')
+const { returnErrorString,valueIstInArray } = rootRequire('helpers/tools')
 
 const rsmq = new RSMQPromise({ host: redisHost, port: redisPort, ns: 'rsmq' })
 

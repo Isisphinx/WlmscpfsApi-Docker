@@ -1,11 +1,12 @@
 const RSMQWorker = require('rsmq-worker')
 const path = require('path')
 
-const { redisClient } = require('config/redisConnection')
-const { getRedisString, parseRedisKey } = require('helpers/redis')
-const { addStudiesQueue, worklistDir, pino, redisHost, redisPort } = require('config/constants')
+const { redisClient } = rootRequire('config/redisConnection')
+const { getRedisString, parseRedisKey } = rootRequire('helpers/redis')
+const { addStudiesQueue, worklistDir, pino, redisHost, redisPort } = rootRequire('config/constants')
+const { pinoPromise, fs } = rootRequire('helpers/promise')
+
 const { returnDump, convertDumpToWorklistFile } = require('./dumpFile.js')
-const { pinoPromise, fs } = require('helpers/promise')
 
 /*
 TO DO

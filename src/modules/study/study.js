@@ -1,11 +1,11 @@
 const path = require('path')
 
-const { redisClient } = require('config/redisConnection')
-const { stringToLowerCase } = require('helpers/tools')
-const { redisKeyWithNamespace, stringToRedis, isMemberOfRedisSet, redisDeleteKey, redisKeyExist } = require('helpers/redis')
-const { pinoPromise, fs } = require('helpers/promise')
-const { addStudiesQueue, pino, worklistDir, worklistListSet } = require('config/constants')
-const { rsmq } = require('config/rsmqConnection')
+const { redisClient } = rootRequire('config/redisConnection')
+const { stringToLowerCase } = rootRequire('helpers/tools')
+const { redisKeyWithNamespace, stringToRedis, isMemberOfRedisSet, redisDeleteKey, redisKeyExist } = rootRequire('helpers/redis')
+const { pinoPromise, fs } = rootRequire('helpers/promise')
+const { addStudiesQueue, pino, worklistDir, worklistListSet } = rootRequire('config/constants')
+const { rsmq } = rootRequire('config/rsmqConnection')
 
 /*
 TO DO

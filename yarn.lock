@@ -1980,6 +1980,10 @@ minimist@~0.0.1:
   dependencies:
     minimist "0.0.8"
 
+mock-fs@^4.4.2:
+  version "4.4.2"
+  resolved "https://registry.yarnpkg.com/mock-fs/-/mock-fs-4.4.2.tgz#09dec5313f97095a450be6aa2ad8ab6738d63d6b"
+
 mpbasic@0.0.x:
   version "0.0.18"
   resolved "https://registry.yarnpkg.com/mpbasic/-/mpbasic-0.0.18.tgz#f459ba1dc95cca13e5f8003882700d0926a53c00"

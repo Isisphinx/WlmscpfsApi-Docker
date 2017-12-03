@@ -1,8 +1,10 @@
-const path = require('path')
+
+// const path = require('path')
+
 const Promise = require('bluebird')
 const fs = Promise.promisifyAll(require('fs'))
 
-const { pino } = require('config/constants')
+const { pino } = rootRequire('config/constants')
 
 module.exports.fs = fs
 

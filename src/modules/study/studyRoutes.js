@@ -1,5 +1,5 @@
 const { createStudy, deleteStudy } = require('./study')
-const { pino } = require('config/constants')
+const { pino } = rootRequire('config/constants')
 
 module.exports = (app) => {
 

@@ -1,6 +1,6 @@
 const redis = require('ioredis')
 
-const { redisHost, redisPort, pino } = require('config/constants')
+const { redisHost, redisPort, pino } = rootRequire('config/constants')
 
 const redisClient = new redis(redisPort, redisHost) 
 

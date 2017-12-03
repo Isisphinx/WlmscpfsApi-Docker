@@ -20,6 +20,7 @@
   },
   "devDependencies": {
     "jest": "^21.2.1",
-    "jsdoc": "^3.5.5"
+    "jsdoc": "^3.5.5",
+    "mock-fs": "^4.4.2"
   }
 }

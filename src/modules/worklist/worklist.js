@@ -1,10 +1,10 @@
 const path = require('path')
 
-const { redisClient } = require('config/redisConnection')
-const { stringToLowerCase, returnErrorString, returnFilesPath } = require('helpers/tools')
-const { isNotMemberOfRedisSet, redisAddValueToRedisSet } = require('helpers/redis')
-const { pinoPromise, deleteArrayOfFiles, fs } = require('helpers/promise')
-const { pino, worklistDir, worklistListSet } = require('config/constants')
+const { redisClient } = rootRequire('config/redisConnection')
+const { stringToLowerCase, returnErrorString, returnFilesPath } = rootRequire('helpers/tools')
+const { isNotMemberOfRedisSet, redisAddValueToRedisSet } = rootRequire('helpers/redis')
+const { pinoPromise, deleteArrayOfFiles, fs } = rootRequire('helpers/promise')
+const { pino, worklistDir, worklistListSet } = rootRequire('config/constants')
 
 module.exports.createWorklist = (req, res) => {
   /*
