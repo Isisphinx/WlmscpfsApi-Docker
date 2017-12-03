@@ -16,9 +16,16 @@ afterEach(() => {
   mock.restore()
 })
 
-test('the data is peanut butter', () => {
-  expect.assertions(1);
+test('deleting the files in array', () => {
+  expect.assertions(1)
   return deleteArrayOfFiles(['file1', 'file2']).then(data => {
-    expect(data).toBe(['file1', 'file2']);
-  });
-});
+    expect(data).toEqual(['file1', 'file2'])
+  })
+})
+
+test('return files that failed to be deleted', () => {
+  expect.assertions(1)
+  return deleteArrayOfFiles(['file1', 'file3']).then(data => {
+    expect(data).toEqual(['file1', { 'err': 'file3' }])
+  })
+})

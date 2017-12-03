@@ -1,13 +1,12 @@
 'use strict'
 const path = require('path')
+const app = require('express')()
+const fs = require('fs')
+const bodyParser = require('body-parser')
 
 global.rootRequire = function (name) {
   return require(path.join(__dirname, name))
 }
-
-const app = require('express')()
-const fs = require('fs')
-const bodyParser = require('body-parser')
 
 const redisConnection = rootRequire('config/redisConnection')
 const { pino } = rootRequire('config/constants')

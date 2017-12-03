@@ -1,6 +1,3 @@
-
-// const path = require('path')
-
 const Promise = require('bluebird')
 const fs = Promise.promisifyAll(require('fs'))
 
@@ -10,8 +7,8 @@ module.exports.fs = fs
 
 module.exports.deleteArrayOfFiles = (filesArray) => {
   return Promise.map(filesArray, (file) => fs.unlinkAsync(file).then(data => file).catch(err => {
-    pino.error(err, 'Error deleting file')
-    return { 'err': err.cause.path }
+    // pino.error(err, 'Error deleting file')
+    return { 'err': file }
   }))
 }
 
