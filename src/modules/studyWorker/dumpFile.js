@@ -1,7 +1,7 @@
 const { spawn } = require('child_process')
 
-module.exports.returnDump = (json) => { //Return the dump file data
-  return `(0010,0010) PN ${json.PatientName}
+module.exports.returnDump = json => // Return the dump file data
+  `(0010,0010) PN ${json.PatientName}
 (0010,0020) LO ${json.PatientID}
 (0010,0030) DA ${json.PatientBirthDate}
 (0010,0040) CS ${json.PatientSex}
@@ -18,13 +18,13 @@ module.exports.returnDump = (json) => { //Return the dump file data
 (fffe,e00d) -
 (fffe,e0dd) -
 (0040,1001) SH ${json.RequestedProcedureID}`
-}
 
-module.exports.convertDumpToWorklistFile = (dumpFile) => { // Convert dump file to a dicom worklist file
-  return new Promise((resolve, reject) => {
-    const dcmFile = dumpFile + '.wl'
+
+module.exports.convertDumpToWorklistFile = dumpFile => // Convert dump file to a dicom worklist file
+  new Promise((resolve, reject) => {
+    const dcmFile = `${dumpFile}.wl`
     let stderr = ''
-    const dump2dcm = spawn('dump2dcm/dump2dcm', ['+te', dumpFile, dcmFile], { 'env': { 'DCMDICTPATH': 'dump2dcm/dicom.dic' } })
+    const dump2dcm = spawn('dump2dcm/dump2dcm', ['+te', dumpFile, dcmFile], { env: { DCMDICTPATH: 'dump2dcm/dicom.dic' } })
     dump2dcm.stderr.on('data', (chunk) => {
       stderr += chunk.toString()
     })
@@ -32,4 +32,3 @@ module.exports.convertDumpToWorklistFile = (dumpFile) => { // Convert dump file 
       code === 0 ? resolve(dcmFile) : reject(stderr)
     })
   })
-}

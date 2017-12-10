@@ -1,3 +1,7 @@
+/*
+global rootRequire
+*/
+
 const path = require('path')
 
 const { redisClient } = rootRequire('config/redisConnection')
@@ -8,7 +12,8 @@ const { pino, worklistDir, worklistListSet } = rootRequire('config/constants')
 
 module.exports.createWorklist = (req, res) => {
   /*
-  worklist name to lowercase -> check if worklist exist -> Create worklist in db -> create worklist folder -> initialize worklist with lockfile
+  worklist name to lowercase -> check if worklist exist
+  -> Create worklist in db -> create worklist folder -> initialize worklist with lockfile
   */
   const worklistNameLowerCase = stringToLowerCase(req.params.WorklistName)
   const worklistPath = path.join(worklistDir, worklistNameLowerCase)
@@ -20,18 +25,18 @@ module.exports.createWorklist = (req, res) => {
     .then(([set, value]) => redisAddValueToRedisSet(set, value, redisClient))
     .then(data => pinoPromise.trace(data, 'createWorklist()', 'redisAddValueToRedisSet'))
 
-    .then(([set, value]) => fs.mkdirAsync(worklistPath))
+    .then(() => fs.mkdirAsync(worklistPath))
     .then(data => pinoPromise.trace(data, 'createWorklist()', 'fs.mkdirAsync(worklistPath)'))
 
-    .then((path) => fs.writeFileAsync(lockFile, ''))
+    .then(() => fs.writeFileAsync(lockFile, ''))
     .then(data => pinoPromise.trace(data, 'createWorklist()', "fs.writeFileAsync(lockFile, '')"))
 
-    .then(pathLockFile => {
+    .then((pathLockFile) => {
       pino.debug('createWorklist()', 'Created worklist', worklistNameLowerCase, pathLockFile)
       res.send('200')
       return pathLockFile
     })
-    .catch(err => {
+    .catch((err) => {
       pino.error(err, 'createWorklist()', 'Error trying to create worklist', worklistNameLowerCase)
       res.send('400')
     })
@@ -53,20 +58,20 @@ module.exports.purgeWorklist = (req, res) => {
 
   redisClient.sismember(worklistListSet, worklistNameLowerCase)
     .then(worklistExists => worklistExists || returnErrorString('Worklist does not exist'))
-    .then((worklistExists) => fs.readdirAsync(worklistPath))
+    .then(() => fs.readdirAsync(worklistPath))
     .then(files => returnFilesPath(files, worklistPath))
     .then(filesWithPath => deleteArrayOfFiles(filesWithPath))
     .then(data => pinoPromise.trace(data, 'deleted files in worklist'))
-    .then(data => {
+    .then(() => {
       pino.debug(worklistNameLowerCase, 'worklist purged')
       res.send('200')
     })
-    .catch(err => { pino.error(err, 'Error purging worklist', worklistNameLowerCase) })
+    .catch((err) => { pino.error(err, 'Error purging worklist', worklistNameLowerCase) })
 }
 
 // redisClient.keys(req.params.WorklistName.toLowerCase() + ':*', (err, keys) => {
-  //         if (err) throw err
-  //         keys.forEach(function (key) {
-  //           redisClient.del(key)
-  //         })
-  //       })
+//         if (err) throw err
+//         keys.forEach(function (key) {
+//           redisClient.del(key)
+//         })
+//       })

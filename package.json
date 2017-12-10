@@ -6,7 +6,9 @@
   "main": "src/app.js",
   "scripts": {
     "start": "node server.js",
-    "test": "jest"
+    "test": "./node_modules/.bin/jest",
+    "lint": "./node_modules/.bin/eslint . --fix",
+    "jsdoc": "./node_modules/.bin/jsdoc src -r -d docs"
   },
   "dependencies": {
     "bluebird": "^3.5.1",
@@ -18,6 +20,9 @@
     "rsmq-worker": "^0.5.2"
   },
   "devDependencies": {
+    "eslint": "^4.13.0",
+    "eslint-config-airbnb-base": "^12.1.0",
+    "eslint-plugin-import": "^2.8.0",
     "jest": "^21.2.1",
     "jsdoc": "^3.5.5",
     "mock-fs": "^4.4.2"

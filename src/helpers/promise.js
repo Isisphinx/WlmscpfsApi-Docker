@@ -1,3 +1,7 @@
+/*
+global rootRequire
+*/
+
 const Promise = require('bluebird')
 const fs = Promise.promisifyAll(require('fs'))
 
@@ -5,14 +9,11 @@ const { pino } = rootRequire('config/constants')
 
 module.exports.fs = fs
 
-module.exports.deleteArrayOfFiles = (filesArray) => {
-  return Promise.map(filesArray, (file) => fs.unlinkAsync(file).then(data => file).catch(err => {
-    // pino.error(err, 'Error deleting file')
-    return { 'err': file }
-  }))
-}
+module.exports.deleteArrayOfFiles = filesArray => Promise.map(filesArray, file => fs.unlinkAsync(file)
+  .then(() => file)
+  .catch(() => ({ err: file })))
 
-module.exports.toPromise = (syncFunction) => Promise.resolve(syncFunction)
+module.exports.toPromise = syncFunction => Promise.resolve(syncFunction)
 
 module.exports.pinoPromise = {}
 

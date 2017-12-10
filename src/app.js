@@ -1,16 +1,14 @@
-'use strict'
+/*
+global rootRequire
+*/
+
 const path = require('path')
 const app = require('express')()
-const fs = require('fs')
 const bodyParser = require('body-parser')
 
-global.rootRequire = function (name) {
-  return require(path.join(__dirname, name))
-}
+global.rootRequire = name => require(path.join(__dirname, name))
 
-const redisConnection = rootRequire('config/redisConnection')
 const { pino } = rootRequire('config/constants')
-const studyWorker = rootRequire('modules/studyWorker')
 
 /*
 TO DO
@@ -20,16 +18,13 @@ TO DO
 - Gracefully shutdown application on exit signal
 - Change promise to bluebird
 
-- Route function not with req res : make a function with parameters and switch of returned value for res
+- Route function make a function with parameters and switch of returned value for res
 */
 
 app.use(bodyParser.json())
 
 rootRequire('modules/study')(app)
 rootRequire('modules/worklist')(app)
-
-// Initialize DB
-const redisClient = redisConnection.redisClient
 
 app.get('/', (req, res) => {
   pino.debug('Http:Get /')

@@ -1,2 +1,3 @@
 const worklistRoutes = require('./worklistRoutes')
-module.exports = (app) => {worklistRoutes(app)}
+
+module.exports = (app) => { worklistRoutes(app) }

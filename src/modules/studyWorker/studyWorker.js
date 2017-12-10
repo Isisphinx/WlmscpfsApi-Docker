@@ -1,9 +1,15 @@
+/*
+global rootRequire
+*/
+
 const RSMQWorker = require('rsmq-worker')
 const path = require('path')
 
 const { redisClient } = rootRequire('config/redisConnection')
 const { getRedisString, parseRedisKey } = rootRequire('helpers/redis')
-const { addStudiesQueue, worklistDir, pino, redisHost, redisPort } = rootRequire('config/constants')
+const {
+  addStudiesQueue, worklistDir, pino, redisHost, redisPort,
+} = rootRequire('config/constants')
 const { pinoPromise, fs } = rootRequire('helpers/promise')
 
 const { returnDump, convertDumpToWorklistFile } = require('./dumpFile.js')
@@ -13,21 +19,22 @@ TO DO
 - multiple procedure step -> multiple file
 */
 
-const studyWorker = new RSMQWorker(addStudiesQueue, { host: redisHost, port: redisPort, interval: [.05, 1, 3], autostart: true, redisPrefix: 'rsmq' }) // Throw an error as it also silently create the queue
+const studyWorker = new RSMQWorker(addStudiesQueue, {
+  host: redisHost, port: redisPort, interval: [0.05, 1, 3], autostart: true, redisPrefix: 'rsmq',
+}) // Throw an error as it also silently create the queue
 
-studyWorker.on('error', function (err, msg) {
+studyWorker.on('error', (err, msg) => {
   pino.error(err, 'Worker error on message id', msg.id)
 })
-studyWorker.on('exceeded', function (msg) {
+studyWorker.on('exceeded', (msg) => {
   pino.warn('Queue exceeded', addStudiesQueue, msg.id)
-
 })
-studyWorker.on('timeout', function (msg) {
+studyWorker.on('timeout', (msg) => {
   pino.warn('Message timeout', addStudiesQueue, msg.id, msg.rc)
 })
 
-studyWorker.on("message", (msg, next, id) => {
-  pino.debug(msg, 'Message received by worker', addStudiesQueue)
+studyWorker.on('message', (msg, next, id) => {
+  pino.debug(msg, 'Message received by worker', id, addStudiesQueue)
   const [worklistName, StudyInstanceUID] = parseRedisKey(msg)
   const dumpFilePath = path.join(worklistDir, worklistName, StudyInstanceUID)
 
@@ -46,15 +53,15 @@ studyWorker.on("message", (msg, next, id) => {
     .then(([filePath]) => convertDumpToWorklistFile(filePath))
     .then(data => pinoPromise.trace(data, 'studyWorker.on("message")', 'convertDumpToWorklistFile'))
 
-    .then(data => fs.unlinkAsync(dumpFilePath))
+    .then(() => fs.unlinkAsync(dumpFilePath))
     .then(data => pinoPromise.trace(data, 'studyWorker.on("message")', 'fs.unlinkAsync(dumpFilePath)'))
 
-    .then(dumpFile => {
+    .then((dumpFile) => {
       pino.debug('Created worklist file', dumpFile)
       next()
       return dumpFile
     })
-    .catch(err => { pino.error(err, 'Error creating worklist file') })
+    .catch((err) => { pino.error(err, 'Error creating worklist file') })
 })
 
 module.exports.studyWorker = studyWorker
