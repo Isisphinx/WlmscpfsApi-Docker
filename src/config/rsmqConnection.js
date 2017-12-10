@@ -1,13 +1,9 @@
-/*
-global rootRequire
-*/
-
 const RSMQPromise = require('rsmq-promise')
 
 const {
   addStudiesQueue, pino, redisHost, redisPort,
-} = rootRequire('config/constants')
-const { returnErrorString, valueIstInArray } = rootRequire('helpers/tools')
+} = require('./constants')
+const { returnErrorString, valueIstInArray } = require('../helpers/tools')
 
 const rsmq = new RSMQPromise({ host: redisHost, port: redisPort, ns: 'rsmq' })
 

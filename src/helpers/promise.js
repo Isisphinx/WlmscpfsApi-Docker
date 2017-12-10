@@ -1,11 +1,7 @@
-/*
-global rootRequire
-*/
-
 const Promise = require('bluebird')
 const fs = Promise.promisifyAll(require('fs'))
 
-const { pino } = rootRequire('config/constants')
+const { pino } = require('../config/constants')
 
 module.exports.fs = fs
 

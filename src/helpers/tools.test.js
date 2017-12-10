@@ -11,7 +11,7 @@ test('Turn string to lower case', () => {
   expect(stringToLowerCase('ABC')).toBe('abc')
 })
 
-test('It should throw a simple error', () => {
+test('Throw a simple error', () => {
   function throwSimpleError() {
     returnErrorString('My simple error')
   }

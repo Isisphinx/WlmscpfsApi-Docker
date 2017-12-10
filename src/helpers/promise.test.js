@@ -1,14 +1,6 @@
-/*
-global rootRequire
-*/
-
-const path = require('path')
-
-global.rootRequire = name => require(path.join(__dirname, '..', name))
-
 const mock = require('mock-fs')
 
-const { fs, deleteArrayOfFiles } = rootRequire('helpers/promise')
+const { fs, deleteArrayOfFiles } = require('./promise')
 
 beforeEach(() => {
   mock({

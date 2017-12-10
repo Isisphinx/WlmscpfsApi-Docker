@@ -1,26 +1,21 @@
-/*
-global rootRequire
-*/
-
-
 const app = require('express')()
 const bodyParser = require('body-parser')
 
-const { pino } = rootRequire('config/constants')
+const { pino } = require('./config/constants')
 
 /*
 TO DO
 - ioredis using promised version
 - Refactor purge worklist
-- Gracefully shutdown application on exit signal
 - Change promise to bluebird
 - Route function make a function with parameters and switch of returned value for res
+- change to koa
 */
 
 app.use(bodyParser.json())
 
-rootRequire('modules/study')(app)
-rootRequire('modules/worklist')(app)
+require('./modules/study')(app)
+require('./modules/worklist')(app)
 
 app.get('/', (req, res) => {
   pino.debug('Http:Get /')

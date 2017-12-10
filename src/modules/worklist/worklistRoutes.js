@@ -1,10 +1,5 @@
-/*
-global rootRequire
-*/
-
 const { createWorklist, purgeWorklist } = require('./worklist')
-
-const { pino } = rootRequire('config/constants')
+const { pino } = require('../../config/constants')
 
 module.exports = (app) => {
   app.put('/:WorklistName/', (req, res) => {

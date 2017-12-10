@@ -1,18 +1,15 @@
-/*
-global rootRequire
-*/
 const path = require('path')
 
-const { redisClient } = rootRequire('config/redisConnection')
-const { stringToLowerCase } = rootRequire('helpers/tools')
+const { redisClient } = require('../../config/redisConnection')
+const { stringToLowerCase } = require('../../helpers/tools')
 const {
   redisKeyWithNamespace, stringToRedis, isMemberOfRedisSet, redisDeleteKey, redisKeyExist,
-} = rootRequire('helpers/redis')
-const { fs } = rootRequire('helpers/promise')
+} = require('../../helpers/redis')
+const { fs } = require('../../helpers/promise')
 const {
   addStudiesQueue, pino, worklistDir, worklistListSet,
-} = rootRequire('config/constants')
-const { rsmq } = rootRequire('config/rsmqConnection')
+} = require('../../config/constants')
+const { rsmq } = require('../../config/rsmqConnection')
 
 /*
 TO DO

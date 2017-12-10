@@ -1,10 +1,6 @@
-/*
-global rootRequire
-*/
-
 const { createStudy, deleteStudy } = require('./study')
 
-const { pino } = rootRequire('config/constants')
+const { pino } = require('../../config/constants')
 
 module.exports = (app) => {
   app.put('/:WorklistName/:StudyInstanceUID', (req, res) => { // Create or update study

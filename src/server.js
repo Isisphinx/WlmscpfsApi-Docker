@@ -1,17 +1,15 @@
-/*
-global rootRequire
-*/
-
 const path = require('path')
 
-global.rootRequire = name => require(path.join(__dirname, name))
+global.base = path.join(__dirname, '/')
 
-const { pino } = rootRequire('config/constants')
+const { pino } = require('./config/constants')
+
 const app = require('./app')
 
 /*
 TO DO
 - Start listening when db connected stop if db disconnected
+- Gracefully shutdown application on exit signal
 */
 
 app.listen(8080, '0.0.0.0', () => {
