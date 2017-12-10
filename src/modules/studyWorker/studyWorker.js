@@ -3,7 +3,9 @@ const path = require('path')
 
 const { redisClient } = require('../../config/redisConnection')
 const { getRedisString, parseRedisKey } = require('../../helpers/redis')
-const { addStudiesQueue, worklistDir, pino, redisHost, redisPort } = require('../../config/constants')
+const {
+  addStudiesQueue, worklistDir, pino, redisHost, redisPort,
+} = require('../../config/constants')
 const { pinoPromise, fs } = require('../../helpers/promise')
 const { returnDump, convertDumpToWorklistFile } = require('./dumpFile.js')
 

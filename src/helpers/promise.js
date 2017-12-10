@@ -5,9 +5,11 @@ const { pino } = require('../config/constants')
 
 module.exports.fs = fs
 
-module.exports.deleteArrayOfFiles = filesArray => Promise.map(filesArray, file => fs.unlinkAsync(file)
-  .then(() => file)
-  .catch(() => ({ err: file })))
+module.exports.deleteArrayOfFiles = filesArray => (
+  Promise.map(filesArray, file => fs.unlinkAsync(file)
+    .then(() => file)
+    .catch(() => ({ err: file })))
+)
 
 module.exports.toPromise = syncFunction => Promise.resolve(syncFunction)
 

@@ -6,14 +6,9 @@
   "main": "src/app.js",
   "scripts": {
     "start": "node server.js",
-    "test": "./node_modules/.bin/jest",
+    "test": "./node_modules/.bin/jest --config jest.json",
     "lint": "./node_modules/.bin/eslint . --fix",
     "jsdoc": "./node_modules/.bin/jsdoc src -r -d docs"
-  },
-  "jest": {
-    "testEnvironment": "node",
-    "collectCoverage": true,
-    "coverageDirectory": "./coverage/"
   },
   "dependencies": {
     "bluebird": "^3.5.1",
