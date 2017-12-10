@@ -2,11 +2,9 @@
 global rootRequire
 */
 
-const path = require('path')
+
 const app = require('express')()
 const bodyParser = require('body-parser')
-
-global.rootRequire = name => require(path.join(__dirname, name))
 
 const { pino } = rootRequire('config/constants')
 
@@ -30,5 +28,4 @@ app.get('/', (req, res) => {
   pino.debug('Http:Get /')
   res.send('Dicom Worklist is running...')
 })
-
-app.listen(8080, '0.0.0.0')
+module.exports = app
