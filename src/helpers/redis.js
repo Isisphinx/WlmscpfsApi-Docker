@@ -1,5 +1,16 @@
 const Promise = require('bluebird')
 
+module.exports.connectToRedis = redisClient => (
+  new Promise((resolve, reject) => {
+    redisClient.on('connect', () => {
+      resolve('Redis client connected to host')
+    })
+    redisClient.on('error', (err) => {
+      reject(err)
+    })
+  })
+)
+
 // Add the specified string to redis
 module.exports.stringToRedis = (key, dataString, redis) =>
   new Promise((resolve, reject) => {
@@ -62,7 +73,6 @@ module.exports.redisAddValueToRedisSet = (set, value, redis) =>
       res === 1 ? resolve([set, value]) : reject(`${value} already exists in ${set}`)
     })
   })
-
 
 module.exports.redisKeyWithNamespace = (...args) => args.join(':')
 

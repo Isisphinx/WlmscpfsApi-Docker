@@ -23,6 +23,7 @@
     "eslint": "^4.13.0",
     "eslint-config-airbnb-base": "^12.1.0",
     "eslint-plugin-import": "^2.8.0",
+    "ioredis-mock": "^3.5.0",
     "jest": "^21.2.1",
     "jsdoc": "^3.5.5",
     "mock-fs": "^4.4.2"

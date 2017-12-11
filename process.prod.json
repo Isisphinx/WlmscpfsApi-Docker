@@ -1,8 +1,10 @@
 {
-  "apps" : [{
-    "name"        : "Wlmscpfs Api",
-    "script"      : "src/server.js",
-    "exec_mode"  : "cluster",
-    "instances" : "max"
-  }]
+  "apps": [
+    {
+      "name": "Wlmscpfs Api",
+      "script": "src/server.js",
+      "exec_mode": "cluster",
+      "instances": "max"
+    }
+  ]
 }

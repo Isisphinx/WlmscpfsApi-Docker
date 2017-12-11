@@ -29,6 +29,10 @@ module.exports.convertDumpToWorklistFile = dumpFile => // Convert dump file to a
       stderr += chunk.toString()
     })
     dump2dcm.on('close', (code) => {
-      code === 0 ? resolve(dcmFile) : reject(stderr)
+      if (code !== 0) {
+        reject(stderr)
+        return
+      }
+      resolve(dcmFile)
     })
   })

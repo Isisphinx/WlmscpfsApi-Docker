@@ -1,11 +1,20 @@
 {
-  "apps" : [{
-    "name"        : "Wlmscpfs Api",
-    "script"      : "src/server.js",
-    "watch"       : true,
-    "exec_mode"  : "cluster",
-    "instances" : "max",
-    "ignore_watch" : ["processing", "worklistDir"],
-    "watch_options": {"persistent" : true, "ignoreInitial" : true, "usePolling": true}
-  }]
+  "apps": [
+    {
+      "name": "Wlmscpfs Api",
+      "script": "src/server.js",
+      "watch": true,
+      "exec_mode": "cluster",
+      "instances": "max",
+      "ignore_watch": [
+        "processing",
+        "worklistDir"
+      ],
+      "watch_options": {
+        "persistent": true,
+        "ignoreInitial": true,
+        "usePolling": true
+      }
+    }
+  ]
 }

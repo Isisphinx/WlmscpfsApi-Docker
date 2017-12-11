@@ -4,4 +4,6 @@ module.exports.logLevel = 1
 module.exports.redisHost = 'redis'
 module.exports.redisPort = 6379
 module.exports.worklistListSet = 'worklistList'
+module.exports.appPort = 8080
+module.exports.rsmqNs = 'rsmq'
 module.exports.pino = require('pino')({ level: 'trace', prettyPrint: { forceColor: true } })

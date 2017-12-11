@@ -4,7 +4,7 @@ const path = require('path')
 const { redisClient } = require('../../config/redisConnection')
 const { getRedisString, parseRedisKey } = require('../../helpers/redis')
 const {
-  addStudiesQueue, worklistDir, pino, redisHost, redisPort,
+  addStudiesQueue, worklistDir, pino, redisHost, redisPort, rsmqNs,
 } = require('../../config/constants')
 const { pinoPromise, fs } = require('../../helpers/promise')
 const { returnDump, convertDumpToWorklistFile } = require('./dumpFile.js')
@@ -15,7 +15,7 @@ TO DO
 */
 
 const studyWorker = new RSMQWorker(addStudiesQueue, {
-  host: redisHost, port: redisPort, interval: [0.05, 1, 3], autostart: true, redisPrefix: 'rsmq',
+  host: redisHost, port: redisPort, interval: [0.05, 1, 3], autostart: true, redisPrefix: rsmqNs,
 }) // Throw an error as it also silently create the queue
 
 studyWorker.on('error', (err, msg) => {

@@ -1,20 +1,14 @@
 const RSMQPromise = require('rsmq-promise')
+const { createQueueIfNonExist } = require('../helpers/rsmq')
 
 const {
-  addStudiesQueue, pino, redisHost, redisPort,
+  addStudiesQueue, redisHost, redisPort, pino, rsmqNs,
 } = require('./constants')
-const { returnErrorString, valueIstInArray } = require('../helpers/tools')
 
-const rsmq = new RSMQPromise({ host: redisHost, port: redisPort, ns: 'rsmq' })
-
-const createQueueIfNonExist = (queueToCreate, rsmqConnection) => {
-  rsmqConnection.listQueues()
-    .then(queues => valueIstInArray(queues, queueToCreate))
-    .then(worklistExists => (worklistExists ? returnErrorString('Worklist already exists') : rsmqConnection.createQueue({ qname: queueToCreate })))
-    .then(() => { pino.info('Rsmq queue', queueToCreate, 'created') })
-    .catch((err) => { pino.error(err, 'Error Creating Rsmq queue', queueToCreate) })
-}
+const rsmq = new RSMQPromise({ host: redisHost, port: redisPort, ns: rsmqNs })
 
 createQueueIfNonExist(addStudiesQueue, rsmq)
+  .then(() => { pino.info('Rsmq queue', addStudiesQueue, 'created') })
+  .catch((err) => { pino.error(err, 'Error Creating Rsmq queue', addStudiesQueue) })
 
 module.exports.rsmq = rsmq
